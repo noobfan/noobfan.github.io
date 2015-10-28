@@ -1,0 +1,60 @@
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <script src="../scripts/jquery-1.11.3.min.js"></script>
+        <script src="../bootstrap/js/bootstrap.min.js"></script>
+        <!-- HTML5 Shim 和 Respond.js 用于让 IE8 支持 HTML5元素和媒体查询 -->
+        <!-- 注意： 如果通过 file://  引入 Respond.js 文件，则该文件无法起效果 -->
+        <!--[if lt IE 9]>
+        <script src="../html5shiv/html5shiv.js"></script>
+        <script src="../respond.js/respond.min.js"></script>
+        <![endif]-->
+        <script >
+            var getArgs = function(key) {
+                var retval;
+                var params = location.search;
+                if (!params) {
+                    return "error:no params";
+                }
+                var Args   = params.split("?");
+                if(Args[0] == params){
+                    return "error:no args";
+                }
+                var str = Args[1];
+                var args = str.split("&");
+                for(var i = 0; i < args.length; i ++)
+                {
+                    str = args[i];
+                    var arg = str.split("=");
+                    if(arg.length <= 1) continue;
+                    if(arg[0] == key){
+                        retval = arg[1];
+                        break;
+                    }
+                }
+                return retval;
+            };
+        </script>
+    </head>
+
+    <body>
+        <xmp id="markdown" theme="united" style="display:none;">
+            # this is a markdown language text
+            ----
+            ##H1
+            ```java
+                private static final  long long ago=2015;
+            ```
+            ##H2
+        </xmp>
+        <script>
+            $(document).ready(function(){
+                $('#markdown').load('README.md');
+            })
+        </script>
+        <script src="../strapdown/strapdown.js"></script>
+    </body>
+</html>
+
