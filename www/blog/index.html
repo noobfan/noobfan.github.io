@@ -17,10 +17,16 @@
     </head>
 
     <body>
-
         <div id="guide"></div>
         <div id="content"></div>
+
+
         <script>
+            var setContent=function(data){
+                var content= document.getElementById("content");
+                content.innerHTML=data;
+                jQuery.resizeView("iframe");
+            }
             var setGuide=function(){
                 var path="<ul class=\"breadcrumb\">";
                 var map;
@@ -47,14 +53,37 @@
             if(path)
                 names=path.split("/");
             setGuide(names);
+            var content= document.getElementById("test");
         </script>
         <script>
-            var file=Fun.getArgs("goto");
-            jQuery.readText(file,function(data){
-                var content= document.getElementById("content");
-                content.innerHTML=markdown.toHTML(data);
-                jQuery.resizeView("iframe")
-            },false);
+            var files=[];
+            var onClick=function(i){
+                var file=files[i];
+                if(file){
+                    jQuery.readText(file,function(data){
+                        setContent(markdown.toHTML(data));
+                    });
+                }else{
+                }
+            };
+            var blog=function() {
+                jQuery.readText("blog.json", function (data) {
+                    var obj = jQuery.parseJSON(data);
+                    var list = obj.list;
+                    var android = list[0].Android;
+                    var show = "";
+                    var btnId = "btn_open_md_";
+                    for (var i = 0; i < android.length; i++) {
+                        files[i] = "Android/" + android[i];
+                        var button = "<button type=\"button\" class=\"btn btn-default\" onclick=\"onClick(" + i + ")\" >";
+                        button += android[i].replace(".md", "");
+                        button += "</button>";
+                        show += button;
+                    }
+                    setContent(show);
+                }, false);
+            }
+            blog();
         </script>
     </body>
 </html>
