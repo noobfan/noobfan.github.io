@@ -1,0 +1,61 @@
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="../lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <script src="../lib/scripts/jquery-1.11.3.min.js"></script>
+        <script src="../lib/bootstrap/js/bootstrap.min.js"></script>
+        <script src="../lib/markdown/markdown.min.js"></script>
+        <script src="../lib/scripts/personal.js"></script>
+
+        <!--[if lt IE 9]>
+        <script src="../lib/html5shiv/html5shiv.js"></script>
+        <script src="../lib/respond.js/respond.min.js"></script>
+        <![endif]-->
+        <script >
+        </script>
+    </head>
+
+    <body>
+
+        <div id="guide"></div>
+        <div id="content"></div>
+        <script>
+            var setGuide=function(){
+                var path="<ul class=\"breadcrumb\">";
+                var map;
+                if(arguments[0] instanceof Object){
+                    map=arguments[0];
+                }else{
+                    map=arguments;
+                }
+                for(var i=0;i<map.length;i++){
+                    var name=map[i];
+                    path+="<li><a>"+name+"</a></li>";
+                }
+                path+="</ul>";
+                var guide= document.getElementById("guide");
+                if(guide){
+                    guide.innerHTML=path;
+                    guide.style.display="block";
+                }else{
+                    guide.style.display="none";
+                }
+            }
+            var path=Fun.getArgs("goto");
+            var names="blog";
+            if(path)
+                names=path.split("/");
+            setGuide(names);
+        </script>
+        <script>
+            var file=Fun.getArgs("goto");
+            jQuery.readText(file,function(data){
+                var content= document.getElementById("content");
+                content.innerHTML=markdown.toHTML(data);
+                jQuery.resizeView("iframe")
+            },false);
+        </script>
+    </body>
+</html>
+
