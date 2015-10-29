@@ -1,0 +1,90 @@
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="../lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <script src="../lib/scripts/jquery-1.11.3.min.js"></script>
+        <script src="../lib/bootstrap/js/bootstrap.min.js"></script>
+        <script src="../lib/markdown/markdown.min.js"></script>
+        <script src="../lib/scripts/personal.js"></script>
+
+        <!--[if lt IE 9]>
+        <script src="../lib/html5shiv/html5shiv.js"></script>
+        <script src="../lib/respond.js/respond.min.js"></script>
+        <![endif]-->
+        <script >
+        </script>
+    </head>
+
+    <body>
+        <div id="guide"></div>
+        <div id="content"></div>
+
+
+        <script>
+            var setContent=function(data){
+                var content= document.getElementById("content");
+                content.innerHTML=data;
+                jQuery.resizeView("iframe");
+            }
+            var setGuide=function(){
+                var path="<ul class=\"breadcrumb\">";
+                var map;
+                if(arguments[0] instanceof Object){
+                    map=arguments[0];
+                }else{
+                    map=arguments;
+                }
+                for(var i=0;i<map.length;i++){
+                    var name=map[i];
+                    path+="<li><a>"+name+"</a></li>";
+                }
+                path+="</ul>";
+                var guide= document.getElementById("guide");
+                if(guide){
+                    guide.innerHTML=path;
+                    guide.style.display="block";
+                }else{
+                    guide.style.display="none";
+                }
+            }
+            var path=Fun.getArgs("goto");
+            var names="blog";
+            if(path)
+                names=path.split("/");
+            setGuide(names);
+            var content= document.getElementById("test");
+        </script>
+        <script>
+            var files=[];
+            var onClick=function(i){
+                var file=files[i];
+                if(file){
+                    jQuery.readText(file,function(data){
+                        setContent(markdown.toHTML(data));
+                    });
+                }else{
+                }
+            };
+            var blog=function() {
+                jQuery.readText("blog.json", function (data) {
+                    var obj = jQuery.parseJSON(data);
+                    var list = obj.list;
+                    var android = list[0].Android;
+                    var show = "";
+                    var btnId = "btn_open_md_";
+                    for (var i = 0; i < android.length; i++) {
+                        files[i] = "Android/" + android[i];
+                        var button = "<button type=\"button\" class=\"btn btn-default\" onclick=\"onClick(" + i + ")\" >";
+                        button += android[i].replace(".md", "");
+                        button += "</button>";
+                        show += button;
+                    }
+                    setContent(show);
+                }, false);
+            }
+            blog();
+        </script>
+    </body>
+</html>
+
