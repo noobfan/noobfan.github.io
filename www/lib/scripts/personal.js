@@ -17,22 +17,28 @@ jQuery.resizeView = function (id) {
 
 jQuery.readText=function(file,callback,async){
     if(file){
+        Fun.debug("load file:"+file);
         $(function() {
             $.ajax({
                 url: file,
                 dataType: 'text',
                 async: async?true:false ,
                 success: function(data) {
+                    Fun.debug("load file done:"+file);
                     callback(data);
                 }
             });
         });
     }else{
-        console.log("file undefine");
+        Fun.debug("file undefine");
     }
 };
 
 var Fun={};
+Fun.debug=function(log){
+    console.log(log);
+}
+
 Fun.setArgs = function(key,value){
     var p = [];
     p.push( key + '=' + value);
