@@ -78,6 +78,9 @@
                 }, true);
             }
             $(document).ready(function(){
+                $.get("blog.json", function (data, textStauts) {
+                    Fun.debug(textStauts+":"+data);
+                });
                 blog();
             });
         </script>
