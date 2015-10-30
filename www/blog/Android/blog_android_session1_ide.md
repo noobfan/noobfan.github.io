@@ -1,16 +1,16 @@
 ---
-#´î½¨°²×¿¿ª·¢»·¾³
+#æ­å»ºå®‰å“å¼€å‘çŽ¯å¢ƒ
 ---
-###¹¤¾ß
+###å·¥å…·
 1.JDK
 2.SDK,NDK
 3.Eclipse / IDEA /NETBEAN
 ---
-###²½Öè
+###æ­¥éª¤
 ---
 1.JDK
 2.SDK,NDK
 3.Eclipse / IDEA /NETBEAN
-###Ð¡½á
+###å°ç»“
 so easy!
 ---
