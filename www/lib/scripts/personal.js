@@ -27,6 +27,8 @@ jQuery.readText=function(file,callback,async){
                 }
             });
         });
+    }else{
+        console.log("file undefine");
     }
 };
 

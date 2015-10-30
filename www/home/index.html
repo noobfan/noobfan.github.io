@@ -19,11 +19,13 @@
     <body>
         <div id="content"></div>
         <script>
-            jQuery.readText("home.md",function(data){
-                var content= document.getElementById("content");
-                content.innerHTML=markdown.toHTML(data);
-                jQuery.resizeView("iframe")
-            },false);
+            $(document).ready(function(){
+                jQuery.readText("home.md",function(data){
+                    var content= document.getElementById("content");
+                    content.innerHTML=markdown.toHTML(data);
+                    jQuery.resizeView("iframe")
+                },true);
+            });
         </script>
     </body>
 </html>

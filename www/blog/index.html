@@ -41,19 +41,13 @@
                 }
                 path+="</ul>";
                 var guide= document.getElementById("guide");
-                if(guide){
-                    guide.innerHTML=path;
-                    guide.style.display="block";
-                }else{
-                    guide.style.display="none";
-                }
+                guide.innerHTML=path;
             }
             var path=Fun.getArgs("goto");
             var names="blog";
             if(path)
                 names=path.split("/");
             setGuide(names);
-            var content= document.getElementById("test");
         </script>
         <script>
             var files=[];
@@ -81,9 +75,11 @@
                         show += button;
                     }
                     setContent(show);
-                }, false);
+                }, true);
             }
-            blog();
+            $(document).ready(function(){
+                blog();
+            });
         </script>
     </body>
 </html>
