@@ -30,13 +30,13 @@
                 var content= document.getElementById("content");
                 content.innerHTML=data;
                 jQuery.resizeView("iframe");
-            }
+            };
 
             var blog=function() {
                 jQuery.readText("link.md", function (data) {
                     setContent(markdown.toHTML(data));
                 });
-            }
+            };
             $(document).ready(function(){
                 blog();
             });

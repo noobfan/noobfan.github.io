@@ -25,13 +25,13 @@ jQuery.readText=function(file,callback,async){
                 async: async?true:false ,
                 success: function(data, textStatus){
                     //data可能是xmlDoc、jsonObj、html、text等等
-                    this;  //调用本次ajax请求时传递的options参数
+                    //this;  //调用本次ajax请求时传递的options参数
                     Fun.debug("load file done:"+file);
                     callback(data);
                 },
                 error:function(XMLHttpRequest, textStatus, errorThrown){
                     //通常情况下textStatus和errorThrown只有其中一个包含信息
-                    this;   //调用本次ajax请求时传递的options参数
+                    //this;   //调用本次ajax请求时传递的options参数
                     Fun.debug("load file error:"+errorThrown);
                 }
             });
@@ -44,7 +44,7 @@ jQuery.readText=function(file,callback,async){
 var Fun={};
 Fun.debug=function(log){
     console.log(log);
-}
+};
 
 Fun.setArgs = function(key,value){
     var p = [];
@@ -85,4 +85,4 @@ Fun.replaceHtml=function(s){
     s = s.replace(/\'/g, "&#39;");
     s = s.replace(/\n/g, "<br/>");
     return s;
-}
+};
