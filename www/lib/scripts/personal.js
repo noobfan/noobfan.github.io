@@ -26,7 +26,7 @@ jQuery.readText=function(file,callback,async){
                 success: function(data, textStatus){
                     //data可能是xmlDoc、jsonObj、html、text等等
                     //this;  //调用本次ajax请求时传递的options参数
-                    Fun.debug("load file done:"+file+"\n"+data);
+                    Fun.debug("load file done:"+file+"-->"+data);
                     callback(data);
                 },
                 error:function(XMLHttpRequest, textStatus, errorThrown){
