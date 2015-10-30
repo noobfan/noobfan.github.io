@@ -20,7 +20,6 @@ jQuery.readText=function(file,callback,async){
         Fun.debug("load file:"+file);
         $(function() {
             $.ajax({
-                type: "POST",
                 url: file,
                 dataType: 'text',
                 async: async?true:false ,
