@@ -23,9 +23,16 @@ jQuery.readText=function(file,callback,async){
                 url: file,
                 dataType: 'text',
                 async: async?true:false ,
-                success: function(data) {
+                success: function(data, textStatus){
+                    //data可能是xmlDoc、jsonObj、html、text等等
+                    this;  //调用本次ajax请求时传递的options参数
                     Fun.debug("load file done:"+file);
                     callback(data);
+                },
+                error:function(XMLHttpRequest, textStatus, errorThrown){
+                    //通常情况下textStatus和errorThrown只有其中一个包含信息
+                    this;   //调用本次ajax请求时传递的options参数
+                    Fun.debug("load file error:"+errorThrown);
                 }
             });
         });

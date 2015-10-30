@@ -15,14 +15,32 @@
         <script >
         </script>
     </head>
+    <body>
+
         <div>
             <ul>
                 <li><a href="http://user.qzone.qq.com/6213378">My Qzone(6213378)</a></li>
                 <li><a href="http://user.qzone.qq.com/97062445">My Qzone(97062445)</a></li>
             </ul>
         </div>
-    <body>
+        <div id="content"></div>
+        <script>
 
+            var setContent=function(data){
+                var content= document.getElementById("content");
+                content.innerHTML=data;
+                jQuery.resizeView("iframe");
+            }
+
+            var blog=function() {
+                jQuery.readText("link.md", function (data) {
+                    setContent(markdown.toHTML(data));
+                });
+            }
+            $(document).ready(function(){
+                blog();
+            });
+        </script>
     </body>
 </html>
 
