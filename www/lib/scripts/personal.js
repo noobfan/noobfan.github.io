@@ -15,6 +15,12 @@ jQuery.resizeView = function (id) {
     });
 };
 
+jQuery.imgLoaded=function(callback){
+    var imgs=document.getElementsByTagName("img");
+    for(var i=0;i<imgs.length;i++){
+        imgs[i].addEventListener("load",callback);
+    }
+}
 jQuery.readText=function(file,callback,async){
     if(file){
         Fun.debug("load file:"+file);
@@ -43,7 +49,7 @@ jQuery.readText=function(file,callback,async){
 
 var Fun={};
 Fun.debug=function(log){
-    return;
+   // return;
     console.log(log);
 };
 

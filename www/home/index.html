@@ -5,7 +5,7 @@
         <link href="../lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
         <script src="../lib/scripts/jquery-1.11.3.min.js"></script>
         <script src="../lib/bootstrap/js/bootstrap.min.js"></script>
-        <script src="../lib/markdown/markdown.min.js"></script>
+        <script src="../lib/markdown/markdown.js"></script>
         <script src="../lib/scripts/personal.js"></script>
 
         <!--[if lt IE 9]>
@@ -23,8 +23,15 @@
             $(document).ready(function(){
                 jQuery.readText("home.mdf",function(data){
                     var content= document.getElementById("content");
-                    content.innerHTML=markdown.toHTML(data);
-                    jQuery.resizeView("iframe")
+                    var html=markdown.toHTML(data);
+                    //Fun.debug(html);
+                    content.innerHTML=html;
+                    jQuery.imgLoaded(function(){
+                        Fun.debug("imgLoaded");
+                        jQuery.resizeView("iframe")
+                    });
+
+                    jQuery.resizeView("iframe");
                 },false);
             });
         </script>
