@@ -55,7 +55,7 @@
                 var file=files[i];
                 if(file){
                     Fun.debug("blog file:"+file);
-                    jQuery.readText("blog.json",function(data){
+                    jQuery.readText(file,function(data){
                         setContent(markdown.toHTML(data));
                     });
                 }

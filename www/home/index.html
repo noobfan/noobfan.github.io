@@ -21,7 +21,7 @@
         <script>
             Fun.debug("noobfan init...");
             $(document).ready(function(){
-                jQuery.readText("home.md",function(data){
+                jQuery.readText("home.json",function(data){
                     var content= document.getElementById("content");
                     content.innerHTML=markdown.toHTML(data);
                     jQuery.resizeView("iframe")
