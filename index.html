@@ -90,10 +90,11 @@
 		  	        type: '3,2',
 		  	        callback: {
 		  	            login: function (o) { //登录后的回调函数
-		  	                fun.debug("login: " + o.screen_name)
+		  	            	Fun.debug("login: " + o.screen_name)
+		  	            	Fun.debug("uid: " + o.uid)
 		  	            },
 		  	            logout: function () { //退出后的回调函数
-		  	            	fun.debug('logout');
+		  	            	Fun.debug('logout');
 		  	            }
 		  	        }
 		  	    });
