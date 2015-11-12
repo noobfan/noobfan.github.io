@@ -23,7 +23,13 @@
                 <li><a href="http://user.qzone.qq.com/97062445">My Qzone(97062445)</a></li>
             </ul>
         </div>
+        <video style="width:100%"
+               src="endless_live.mp4"
+               autoplay="autoplay">
+        </video>
+
         <div id="content"></div>
+
         <script>
 
             var setContent=function(data){
@@ -32,13 +38,13 @@
                 jQuery.resizeView("iframe");
             };
 
-            var blog=function() {
-                jQuery.readText("link.md", function (data) {
+            var link=function() {
+                jQuery.readText("link.doc", function (data) {
                     setContent(markdown.toHTML(data));
                 });
             };
             $(document).ready(function(){
-                blog();
+                link();
             });
         </script>
     </body>

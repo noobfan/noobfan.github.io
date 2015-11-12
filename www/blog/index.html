@@ -64,13 +64,13 @@
                 jQuery.readText("blog.json", function (data) {
                     var obj = jQuery.parseJSON(data);
                     var list = obj.list;
-                    var android = list[0].Android;
+                    var javaWeb = list[3].JavaWeb;
                     var show = "";
                     var btnId = "btn_open_md_";
-                    for (var i = 0; i < android.length; i++) {
-                        files[i] = "Android/" + android[i];
+                    for (var i = 0; i < javaWeb.length; i++) {
+                        files[i] = "JavaWeb/" + javaWeb[i];
                         var button = "<button type=\"button\" class=\"btn btn-default\" onclick=\"onClick(" + i + ")\" >";
-                        button += android[i].replace(".md", "");
+                        button += javaWeb[i].replace(".mdf", "");
                         button += "</button>";
                         show += button;
                     }
