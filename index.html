@@ -91,8 +91,11 @@
 			  	  		  	WB2.anyWhere(function(W){
 			  			  	    //数据交互
 			  			  	    W.parseCMD('/users/show.json', function(oResult, bStatus) {
+				  	            	Fun.debug("bStatus: " + bStatus);
 			  			  	        if(bStatus) {
-					  	            	Fun.debug("oResult: " + oResult);
+					  	            	Fun.debug("uid: " + oResult.uid);
+			  			  	        }else{
+			  			  	        	
 			  			  	        }
 			  			  	    }, {
 			  			  	        screen_name : o.screen_name
