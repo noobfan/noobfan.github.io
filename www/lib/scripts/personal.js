@@ -2,9 +2,7 @@
 jQuery.resizeView = function (id) {
     $(function(){
         if(window.parent!=window) {
-            //ȡ�����ڵĸ߶�
             var winH = $(window).height();
-            //ȡ��ҳ��ĸ߶�
             var bodyH = $(document).height();
             if (bodyH > winH) {
                 window.parent.document.getElementById(id).height = bodyH;
