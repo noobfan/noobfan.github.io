@@ -2,9 +2,9 @@
 jQuery.resizeView = function (id) {
     $(function(){
         if(window.parent!=window) {
-            //È¡µ½´°¿ÚµÄ¸ß¶È
+            //È¡ï¿½ï¿½ï¿½ï¿½ï¿½ÚµÄ¸ß¶ï¿½
             var winH = $(window).height();
-            //È¡µ½Ò³ÃæµÄ¸ß¶È
+            //È¡ï¿½ï¿½Ò³ï¿½ï¿½Ä¸ß¶ï¿½
             var bodyH = $(document).height();
             if (bodyH > winH) {
                 window.parent.document.getElementById(id).height = bodyH;
@@ -30,14 +30,10 @@ jQuery.readText=function(file,callback,async){
                 dataType: 'text',
                 async: async?true:false ,
                 success: function(data, textStatus){
-                    //data¿ÉÄÜÊÇxmlDoc¡¢jsonObj¡¢html¡¢textµÈµÈ
-                    //this;  //µ÷ÓÃ±¾´ÎajaxÇëÇóÊ±´«µÝµÄoptions²ÎÊý
                     Fun.debug("load file done:"+file);
                     callback(data);
                 },
                 error:function(XMLHttpRequest, textStatus, errorThrown){
-                    //Í¨³£Çé¿öÏÂtextStatusºÍerrorThrownÖ»ÓÐÆäÖÐÒ»¸ö°üº¬ÐÅÏ¢
-                    //this;   //µ÷ÓÃ±¾´ÎajaxÇëÇóÊ±´«µÝµÄoptions²ÎÊý
                     Fun.debug("load file error:"+errorThrown);
                 }
             });
