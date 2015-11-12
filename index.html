@@ -87,13 +87,13 @@
 		  	        type: '3,2',
 		  	        callback: {
 		  	            login: function (o) { //登录后的回调函数
-		  	            	Fun.debug("login: " + o.screen_name);
+		  	            	Fun.debug("login callback: " + o.toString());
 			  	  		  	WB2.anyWhere(function(W){
 			  			  	    //数据交互
 			  			  	    W.parseCMD('/users/show.json', function(oResult, bStatus) {
 				  	            	Fun.debug("bStatus: " + bStatus);
 			  			  	        if(bStatus) {
-					  	            	Fun.debug("uid: " + oResult.uid);
+					  	            	Fun.debug("oResult: " + oResult.toString());
 			  			  	        }else{
 			  			  	        	
 			  			  	        }
