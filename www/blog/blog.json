@@ -19,10 +19,10 @@
     {
       "JavaWeb":
       [
-        "xml_1_简介.mdf",
-        "xml_2_语法.mdf",
-        "xml_3_约束.mdf",
-        "xml_4_编程.mdf"
+        "xml_1_简介.md",
+        "xml_2_语法.md",
+        "xml_3_约束.md",
+        "xml_4_编程.md"
       ]
     }
   ]
