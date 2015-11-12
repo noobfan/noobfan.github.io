@@ -25,10 +25,7 @@
 	 type="text/javascript" charset="utf-8">
 	</script>
 	
-    <script>
-		var status = WB2.checkLogin();
-		Fun.debug(status==true?"已登录微博":"尚未登录微博");
-    </script>
+
   </head>
 
   <body>
@@ -90,7 +87,20 @@
 		  	        type: '3,2',
 		  	        callback: {
 		  	            login: function (o) { //登录后的回调函数
-		  	            	Fun.debug("login: " + o);
+		  	            	Fun.debug("login: " + o.screen_name);
+			  	  		  	WB2.anyWhere(function(W){
+			  			  	    //数据交互
+			  			  	    W.parseCMD('/users/show.json', function(oResult, bStatus) {
+			  			  	        if(bStatus) {
+					  	            	Fun.debug("oResult: " + oResult);
+			  			  	        }
+			  			  	    }, {
+			  			  	        screen_name : o.screen_name
+			  			  	    }, {
+			  			  	        method : 'get',
+			  			  	        cache_time : 30
+			  			  	    });
+			  			  	});
 		  	            },
 		  	            logout: function () { //退出后的回调函数
 		  	            	Fun.debug('logout');
