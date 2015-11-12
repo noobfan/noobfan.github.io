@@ -27,7 +27,7 @@
 	
     <script>
 		var status = WB2.checkLogin();
-		Fun.debug(status?"已登录微博":"尚未登录微博");
+		Fun.debug(status==true?"已登录微博":"尚未登录微博");
     </script>
   </head>
 
@@ -90,8 +90,7 @@
 		  	        type: '3,2',
 		  	        callback: {
 		  	            login: function (o) { //登录后的回调函数
-		  	            	Fun.debug("login: " + o.screen_name)
-		  	            	Fun.debug("uid: " + o.uid)
+		  	            	Fun.debug("login: " + o);
 		  	            },
 		  	            logout: function () { //退出后的回调函数
 		  	            	Fun.debug('logout');
