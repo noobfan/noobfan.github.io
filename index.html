@@ -87,23 +87,8 @@
 		  	        type: '3,2',
 		  	        callback: {
 		  	            login: function (o) { //登录后的回调函数
-		  	            	Fun.debug("login callback: " + JSON.stringify(o));
-			  	  		  	WB2.anyWhere(function(W){
-			  			  	    //数据交互
-			  			  	    W.parseCMD('/users/show.json', function(oResult, bStatus) {
-				  	            	Fun.debug("bStatus: " + bStatus);
-			  			  	        if(bStatus) {
-					  	            	Fun.debug("oResult: " + JSON.stringify(oResult));
-			  			  	        }else{
-			  			  	        	
-			  			  	        }
-			  			  	    }, {
-			  			  	        screen_name : o.screen_name
-			  			  	    }, {
-			  			  	        method : 'get',
-			  			  	        cache_time : 30
-			  			  	    });
-			  			  	});
+		  	            	Fun.debug("nickname="+o.screen_name);
+		  	            	Fun.debug("uid="+o.id);
 		  	            },
 		  	            logout: function () { //退出后的回调函数
 		  	            	Fun.debug('logout');
