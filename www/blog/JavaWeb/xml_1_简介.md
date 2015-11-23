@@ -5,16 +5,16 @@ Extensible markup language ,可扩展标记语言 , W3C组织发布
 
 ## XML是如何保存数据的
 
-```xml
-<?xml version="1.0" encoding="GB2312"?>
-<blog>
-	<Android>
-		<activity>hint</activity>
-		<service></service>
-	</Android>
-	<IOS></IOS>
-</blog>
-```
+    
+	<?xml version="1.0" encoding="GB2312"?>
+	<blog>
+		<Android>
+			<activity>hint</activity>
+			<service></service>
+		</Android>
+		<IOS></IOS>
+	</blog>
+    
 
 1. 在XML语言中，它允许用户自定义标签。每一个标签用于描述一段数据
 2. 一个标签可以分为开始标签和结束标签，在开始标签和结束标签之间有可以嵌套其他标签，利用标签间的嵌套关系来保存数据之间的上下级关系

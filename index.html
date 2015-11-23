@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html xmlns:wb="http://open.weibo.com/wb" >
+<html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,13 +18,6 @@
     <title>Mr.Fan</title>
     <meta name="keywords" content="fan,html,bootstrap,android,ios" />
     <meta name="description" content="Mr.Fan's personal Homepage" />
-    
-    <!-- 新浪微博接入 -->
-	<meta property="wb:webmaster" content="ba8b8fbb86a44944" />
-	<script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js?appkey=295427068&debug=true"
-	 type="text/javascript" charset="utf-8">
-	</script>
-	
 
   </head>
 
@@ -81,21 +74,6 @@
       
 	  	<div id="wb_connect_btn"></div>
 	  	<script>
-		  	WB2.anyWhere(function (W) {
-		  	    W.widget.connectButton({
-		  	        id: "wb_connect_btn",
-		  	        type: '3,2',
-		  	        callback: {
-		  	            login: function (o) { //登录后的回调函数
-		  	            	Fun.debug("nickname="+o.screen_name);
-		  	            	Fun.debug("uid="+o.id);
-		  	            },
-		  	            logout: function () { //退出后的回调函数
-		  	            	Fun.debug('logout');
-		  	            }
-		  	        }
-		  	    });
-		  	});
 	  	</script>
 	  	
       <div class="row clearfix">

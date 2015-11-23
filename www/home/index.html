@@ -30,6 +30,7 @@
                     var content= document.getElementById("content");
                     var html=markdown.toHTML(data);
                     //Fun.debug(html);
+                    //alert(html);
                     content.innerHTML=html;
                     jQuery.imgLoaded(function(){
                         Fun.debug("imgLoaded");
