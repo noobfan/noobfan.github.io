@@ -12,7 +12,14 @@
         <script src="../lib/html5shiv/html5shiv.js"></script>
         <script src="../lib/respond.js/respond.min.js"></script>
         <![endif]-->
+    
+	    <!-- highlight  -->
+	    <link rel="stylesheet" href="../lib/highlight/styles/github-gist.css">
+	    <script src="../lib/highlight/highlight.pack.js" charset="utf-8"></script>
+	    <script>hljs.initHighlightingOnLoad();</script>
+	    
         <script >
+        
         </script>
     </head>
 
@@ -24,21 +31,8 @@
         </video>
         <div id="content"></div>
         <script>
-            Fun.debug("noobfan init...");
             $(document).ready(function(){
-                jQuery.readText("home.md",function(data){
-                    var content= document.getElementById("content");
-                    var html=markdown.toHTML(data);
-                    //Fun.debug(html);
-                    //alert(html);
-                    content.innerHTML=html;
-                    jQuery.imgLoaded(function(){
-                        Fun.debug("imgLoaded");
-                        jQuery.resizeView("iframe")
-                    });
-
-                    jQuery.resizeView("iframe");
-                },false);
+                jQuery.loadMD("home.md","content","iframe");
             });
         </script>
     </body>

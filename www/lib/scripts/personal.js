@@ -1,16 +1,17 @@
 
 jQuery.resizeView = function (id) {
-    $(function(){
-        if(window.parent!=window) {
-            var winH = $(window).height();
-            var bodyH = $(document).height();
-            if (bodyH > winH) {
-                window.parent.document.getElementById(id).height = bodyH;
-            } else {
-                window.parent.document.getElementById(id).height = winH;
-            }
-        }
-    });
+	if(id)
+	    $(function(){
+	        if(window.parent!=window) {
+	            var winH = $(window).height();
+	            var bodyH = $(document).height();
+	            if (bodyH > winH) {
+	                window.parent.document.getElementById(id).height = bodyH;
+	            } else {
+	                window.parent.document.getElementById(id).height = winH;
+	            }
+	        }
+	    });
 };
 
 jQuery.imgLoaded=function(callback){
@@ -21,14 +22,14 @@ jQuery.imgLoaded=function(callback){
 }
 jQuery.readText=function(file,callback,async){
     if(file){
-        Fun.debug("load file:"+file);
+        //Fun.debug("load file:"+file);
         $(function() {
             $.ajax({
                 url: file,
                 dataType: 'text',
                 async: async?true:false ,
                 success: function(data, textStatus){
-                    Fun.debug("load file done:"+file);
+                //    Fun.debug("load file done:"+file);
                     callback(data);
                 },
                 error:function(XMLHttpRequest, textStatus, errorThrown){
@@ -37,9 +38,30 @@ jQuery.readText=function(file,callback,async){
             });
         });
     }else{
-        Fun.debug("file undefine");
+        //Fun.debug("file undefine");
     }
 };
+
+jQuery.loadMD=function(fromFile,toElementID,iframe){
+	jQuery.readText(fromFile,function(data){
+        var content= document.getElementById(toElementID);
+        var html=markdown.toHTML(data);
+        content.innerHTML=html;
+        $('pre code').each(function(i, block) {
+            hljs.highlightBlock(block);
+         });
+        $('p code').each(function(i, block) {
+        	  hljs.highlightBlock(block);
+        	});
+        
+        jQuery.imgLoaded(function(){
+            jQuery.resizeView(iframe)
+        });
+
+        jQuery.resizeView(iframe);
+    },false);
+};
+
 
 var Fun={};
 Fun.debug=function(log){

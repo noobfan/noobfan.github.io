@@ -12,6 +12,12 @@
         <script src="../lib/html5shiv/html5shiv.js"></script>
         <script src="../lib/respond.js/respond.min.js"></script>
         <![endif]-->
+        
+	    <!-- highlight  -->
+	    <link rel="stylesheet" href="../lib/highlight/styles/github-gist.css">
+	    <script src="../lib/highlight/highlight.pack.js" charset="utf-8"></script>
+	    <script>hljs.initHighlightingOnLoad();</script>
+	    
         <script >
         </script>
     </head>
@@ -20,13 +26,7 @@
         <div id="guide"></div>
         <div id="content"></div>
 
-
         <script>
-            var setContent=function(data){
-                var content= document.getElementById("content");
-                content.innerHTML=data;
-                jQuery.resizeView("iframe");
-            }
             var setGuide=function(){
                 var path="<ul class=\"breadcrumb\">";
                 var map;
@@ -55,11 +55,16 @@
                 var file=files[i];
                 if(file){
                     Fun.debug("blog file:"+file);
-                    jQuery.readText(file,function(data){
-                        setContent(markdown.toHTML(data));
-                    });
+                    jQuery.loadMD(file,"content","iframe");
                 }
             };
+
+            var setContent=function(data){
+                var content= document.getElementById("content");
+                content.innerHTML=data;
+                jQuery.resizeView("iframe");
+            }
+            
             var blog=function() {
                 jQuery.readText("blog.json", function (data) {
                     var obj = jQuery.parseJSON(data);
