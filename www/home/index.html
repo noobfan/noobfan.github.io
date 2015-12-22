@@ -1,43 +1,49 @@
-
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link href="../lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-        <script src="../lib/scripts/jquery-1.11.3.min.js"></script>
-        <script src="../lib/bootstrap/js/bootstrap.min.js"></script>
-        <script src="../lib/markdown/markdown.js"></script>
-        <script src="../lib/scripts/personal.js"></script>
-        <script src="../lib/github/github.js"></script>
-        <script src="../lib/github/gist.js"></script>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="../lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="../lib/scripts/jquery-1.11.3.min.js"></script>
+    <script src="../lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../lib/markdown/markdown.js"></script>
+    <script src="../lib/scripts/personal.js"></script>
+    <script src="../lib/scripts/github.js"></script>
 
-        <!--[if lt IE 9]>
-        <script src="../lib/html5shiv/html5shiv.js"></script>
-        <script src="../lib/respond.js/respond.min.js"></script>
-        <![endif]-->
-    
-	    <!-- highlight  -->
-	    <link rel="stylesheet" href="../lib/highlight/styles/github-gist.css">
-	    <script src="../lib/highlight/highlight.pack.js" charset="utf-8"></script>
-	    <script>hljs.initHighlightingOnLoad();</script>
-	    
-        <script >
-            Github.login('noobfan','fzm269567',function(data){
+    <!--[if lt IE 9]>
+    <script src="../lib/html5shiv/html5shiv.js"></script>
+    <script src="../lib/respond.js/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- highlight  -->
+    <link rel="stylesheet" href="../lib/highlight/styles/github-gist.css">
+    <script src="../lib/highlight/highlight.pack.js" charset="utf-8"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script>
+        var github = new Github({
+            username: "noobfan",
+            password: "你猜",
+        });
+        github.show(null,function (data) {
+            Fun.debug(data);
+        })
+        var repo=github.Repositories();
+        repo.listPersonalRepos(null,function (data) {
                 Fun.debug(data);
-            });
-        </script>
-    </head>
+        });
+    </script>
+</head>
 
-    <body>
-        <video style="width:100%" height="0"
-               src="A_Blooming_Tree.mp3"
-               >
-        </video>
-        <div id="content"></div>
-        <script>
-            $(document).ready(function(){
-                jQuery.loadMD("home.md","content","iframe");
-            });
-        </script>
-    </body>
+<body>
+<video style="width:100%" height="0"
+       src="A_Blooming_Tree.mp3"
+        >
+</video>
+<div id="content"></div>
+<script>
+    $(document).ready(function () {
+        jQuery.loadMD("home.md", "content", "iframe");
+    });
+</script>
+</body>
 </html>
 
