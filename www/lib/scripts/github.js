@@ -46,18 +46,17 @@
             var request = function (method, path, params, callback, mediaType, async) {
                 $.ajax(
                     {
-                        type: method,
                         beforeSend: function (xhr) {
                             var type = mediaType ? '.' + mediaType : '';
                             var accept = 'application/vnd.github.' + APIVERSION + type + '+json';
                             xhr.setRequestHeader('Accept', accept);
-                            //xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
                             var authorization = 'Basic ' + Base64Encode(option.username + ':' + option.password);
                             xhr.setRequestHeader('Authorization', authorization);
                         },
-                        //data: params,
+                        type: method,
                         url: getURL(path),
                         data: getParams(params),
+                        contentType: 'application/json;charset=UTF-8',
                         dataType: "json",
                         async: async,
                         success: function (data, textStatus) {

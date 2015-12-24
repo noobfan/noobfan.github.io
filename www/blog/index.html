@@ -55,18 +55,18 @@
                 var file=files[i];
                 if(file){
                     Fun.debug("blog file:"+file);
-                    jQuery.loadMD(file,"content","iframe");
+                    Fun.loadMD(file,"content","iframe");
                 }
             };
 
             var setContent=function(data){
                 var content= document.getElementById("content");
                 content.innerHTML=data;
-                jQuery.resizeView("iframe");
+                Fun.resizeView("iframe");
             }
             
             var blog=function() {
-                jQuery.readText("blog.json", function (data) {
+                Fun.readText("blog.json", function (data) {
                     var obj = jQuery.parseJSON(data);
                     var list = obj.list;
                     var javaWeb = list[3].JavaWeb;

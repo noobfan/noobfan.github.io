@@ -1,66 +1,3 @@
-jQuery.resizeView = function (id) {
-    if (id)
-        $(function () {
-            if (window.parent != window) {
-                var winH = $(window).height();
-                var bodyH = $(document).height();
-                if (bodyH > winH) {
-                    window.parent.document.getElementById(id).height = bodyH;
-                } else {
-                    window.parent.document.getElementById(id).height = winH;
-                }
-            }
-        });
-};
-
-jQuery.imgLoaded = function (callback) {
-    var imgs = document.getElementsByTagName("img");
-    for (var i = 0; i < imgs.length; i++) {
-        imgs[i].addEventListener("load", callback);
-    }
-}
-jQuery.readText = function (file, callback, async) {
-    if (file) {
-        //Fun.debug("load file:"+file);
-        $(function () {
-            $.ajax({
-                url: file,
-                dataType: 'text',
-                async: async ? true : false,
-                success: function (data, textStatus) {
-                    //    Fun.debug("load file done:"+file);
-                    callback(data);
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    Fun.debug("load file error:" + errorThrown);
-                }
-            });
-        });
-    } else {
-        //Fun.debug("file undefine");
-    }
-};
-
-jQuery.loadMD = function (fromFile, toElementID, iframe) {
-    jQuery.readText(fromFile, function (data) {
-        var content = document.getElementById(toElementID);
-        var html = markdown.toHTML(data);
-        content.innerHTML = html;
-        $('pre code').each(function (i, block) {
-            hljs.highlightBlock(block);
-        });
-        $('p code').each(function (i, block) {
-            hljs.highlightBlock(block);
-        });
-
-        jQuery.imgLoaded(function () {
-            jQuery.resizeView(iframe)
-        });
-
-        jQuery.resizeView(iframe);
-    }, false);
-};
-
 
 var Fun = {};
 Fun.debug = function (log) {
@@ -107,27 +44,104 @@ Fun.replaceHtml = function (s) {
     s = s.replace(/\n/g, "<br/>");
     return s;
 };
+Fun.resizeView = function (id) {
+    if (id)
+        $(function () {
+            if (window.parent != window) {
+                var winH = $(window).height();
+                var bodyH = $(document).height();
+                if (bodyH > winH) {
+                    window.parent.document.getElementById(id).height = bodyH;
+                } else {
+                    window.parent.document.getElementById(id).height = winH;
+                }
+            }
+        });
+};
+
+Fun.imgLoaded = function (callback) {
+    var imgs = document.getElementsByTagName("img");
+    for (var i = 0; i < imgs.length; i++) {
+        imgs[i].addEventListener("load", callback);
+    }
+}
+Fun.readText = function (file, callback, async) {
+    if (file) {
+        //Fun.debug("load file:"+file);
+        $(function () {
+            $.ajax({
+                url: file,
+                dataType: 'text',
+                async: async ? true : false,
+                success: function (data, textStatus) {
+                    //Fun.debug("load file done:"+file);
+                    callback(data);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //Fun.debug("load file error:" + errorThrown);
+                }
+            });
+        });
+    } else {
+        //Fun.debug("file undefine");
+    }
+};
 
 
-Fun.Markdown2HtmlByGithub = function (params, callback) {
-    var path = '/markdown' + params.raw ? "/raw" : '';
+Fun.Markdown2Html = function (params, callback) {
+    var path = 'https://api.github.com/markdown' + (params.raw ? "/raw" : '');
     if (params.text) {
         convert(params.text);
     } else if (params.file) {
-        jQuery.readText(fromFile, function (data) {
-            convert(params.data);
+        Fun.readText(params.file, function (data) {
+            convert(data);
         }, true);
     }
     var convert = function (txt) {
         $.ajax({
             type: 'POST',
-            url: path,
-            dataType: 'text',
+            url: "https://api.github.com/markdown",
+            data:params.raw?txt:JSON.stringify({
+                text: txt,
+                mode: "gfm",
+                context: "github/gollum"
+            }),
+            timeout:1500,
+            contentType: params.raw?"text/plain":"text/html",
+            processData: false,
+            dataType: 'html',
             async: params.async ? params.async : true,
-            success: function (data, textStatus) {
-                //    Fun.debug("load file done:"+file);
+            success: function (data) {
+                Fun.debug("load by Github");
                 callback(data);
             },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                Fun.debug("load by local");
+                callback(markdown.toHTML(txt));
+            }
         });
     }
 }
+
+Fun.loadMD = function (fromFile, toElementID, iframe) {
+    Fun.Markdown2Html(
+        {
+            file:fromFile
+        },
+        function(data){
+            var content = document.getElementById(toElementID)
+            content.innerHTML = data;
+            $('pre code').each(function (i, block) {
+                hljs.highlightBlock(block);
+            });
+            $('p code').each(function (i, block) {
+                hljs.highlightBlock(block);
+            });
+
+            Fun.imgLoaded(function () {
+                Fun.resizeView(iframe)
+            });
+            Fun.resizeView(iframe);
+        }
+    )
+};

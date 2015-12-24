@@ -19,17 +19,6 @@
     <script>hljs.initHighlightingOnLoad();</script>
 
     <script>
-        var github = new Github({
-            username: "noobfan",
-            password: "你猜",
-        });
-        github.show(null,function (data) {
-            Fun.debug(data);
-        })
-        var repo=github.Repositories();
-        repo.listPersonalRepos(null,function (data) {
-                Fun.debug(data);
-        });
     </script>
 </head>
 
@@ -41,7 +30,18 @@
 <div id="content"></div>
 <script>
     $(document).ready(function () {
-        jQuery.loadMD("home.md", "content", "iframe");
+        var github = new Github({
+            username: "noobfan",
+            password: "you guess!",
+        });
+        github.show(null,function (data) {
+            Fun.debug(data);
+        })
+        var repo=github.Repositories();
+        repo.listPersonalRepos(null,function (data) {
+            Fun.debug(data);
+        });
+        Fun.loadMD("home.md", "content", "iframe");
     });
 </script>
 </body>

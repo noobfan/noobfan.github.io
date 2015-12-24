@@ -31,20 +31,8 @@
         <div id="content"></div>
 
         <script>
-
-            var setContent=function(data){
-                var content= document.getElementById("content");
-                content.innerHTML=data;
-                jQuery.resizeView("iframe");
-            };
-
-            var link=function() {
-                jQuery.readText("link.md", function (data) {
-                    setContent(markdown.toHTML(data));
-                });
-            };
             $(document).ready(function(){
-                link();
+                Fun.loadMD("link.md","content","iframe")
             });
         </script>
     </body>
