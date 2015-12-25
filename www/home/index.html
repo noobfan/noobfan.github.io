@@ -13,7 +13,7 @@
     <script src="../lib/respond.js/respond.min.js"></script>
     <![endif]-->
 
-    <!-- highlight  -->
+     <!--highlight-->
     <link rel="stylesheet" href="../lib/highlight/styles/github-gist.css">
     <script src="../lib/highlight/highlight.pack.js" charset="utf-8"></script>
     <script>hljs.initHighlightingOnLoad();</script>
@@ -30,16 +30,16 @@
 <div id="content"></div>
 <script>
     $(document).ready(function () {
-        var github = new Github({
+        Github.setAuthorization({
             username: "noobfan",
-            password: "you guess!",
+            password: "fzm269567",
         });
-        github.show(null,function (data) {
-            Fun.debug(data);
-        })
-        var repo=github.Repositories();
-        repo.listPersonalRepos(null,function (data) {
-            Fun.debug(data);
+
+        Github.listPersonalRepos(null,function (list) {
+        });
+
+        Github.getContents('noobfan',list[0].name,'/www',null,function(content){
+            Fun.debug(content);
         });
         Fun.loadMD("home.md", "content", "iframe");
     });

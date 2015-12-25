@@ -89,7 +89,6 @@ Fun.readText = function (file, callback, async) {
 
 
 Fun.Markdown2Html = function (params, callback) {
-    var path = 'https://api.github.com/markdown' + (params.raw ? "/raw" : '');
     if (params.text) {
         convert(params.text);
     } else if (params.file) {
@@ -100,7 +99,7 @@ Fun.Markdown2Html = function (params, callback) {
     var convert = function (txt) {
         $.ajax({
             type: 'POST',
-            url: "https://api.github.com/markdown",
+            url: 'https://api.github.com/markdown' + (params.raw ? "/raw" : ''),
             data:params.raw?txt:JSON.stringify({
                 text: txt,
                 mode: "gfm",
@@ -126,7 +125,8 @@ Fun.Markdown2Html = function (params, callback) {
 Fun.loadMD = function (fromFile, toElementID, iframe) {
     Fun.Markdown2Html(
         {
-            file:fromFile
+            file:fromFile,
+            raw:true
         },
         function(data){
             var content = document.getElementById(toElementID)
