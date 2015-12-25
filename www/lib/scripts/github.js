@@ -106,7 +106,7 @@ var Github = (function () {
 
     this.getContents = function (owner, repo, file, params, callback) {
         var path = '/repos/' + owner +'/'+repo+ '/contents'+(file.substring(0,1)=='/'?'':'/')+file;
-        request('GET ', path, params, callback);
+        request('GET', path, params, callback);
     }
 
     return this;
