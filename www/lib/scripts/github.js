@@ -31,7 +31,7 @@ var Github = (function () {
         var url = path.indexOf('//') >= 0 ? path : APIURL + path;
         url += ((/\?/).test(url) ? '&' : '?');
         return url.replace(/(&timestamp=\d+)/, '') +
-            (typeof window !== 'undefined' ? '&timestamp=' + new Date().getTime() : '');
+            (typeof window !== 'undefined' ? 'timestamp=' + new Date().getTime() : '');
     }
     var getParams = function (params) {
         var p;
