@@ -1,4 +1,4 @@
-var Github = (function () {
+Github = (function () {
 
     var APIURL = 'https://api.github.com';
     var APIVERSION = 'v3';
@@ -44,7 +44,6 @@ var Github = (function () {
         return p;
     }
     var request = function (method, path, params, callback, mediaType, async) {
-        Fun.debug('Request URL : '+getURL(path));
         $.ajax(
             {
                 beforeSend: function (xhr) {
@@ -63,6 +62,13 @@ var Github = (function () {
                 success: function (data, textStatus) {
                     if (callback)
                         callback(data);
+
+                    $('pre code').each(function (i, block) {
+                        hljs.highlightBlock(block);
+                    });
+                    $('p code').each(function (i, block) {
+                        hljs.highlightBlock(block);
+                    });
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     if (callback)
@@ -71,6 +77,46 @@ var Github = (function () {
             }
         );
     };
+
+    this.Markdown2Html = function (params, callback) {
+        if (params.text) {
+            convert(params.text);
+        } else if (params.file) {
+                $.ajax({
+                    url: params.file,
+                    dataType: 'text',
+                    async: true,
+                    success: function (data, textStatus) {
+                        convert(data);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    }
+                });
+        }
+        var convert = function (txt) {
+            $.ajax({
+                type: 'POST',
+                url: 'https://api.github.com/markdown' + (params.raw ? "/raw" : ''),
+                data:params.raw?txt:JSON.stringify({
+                    text: txt,
+                    mode: "gfm",
+                    context: "github/gollum"
+                }),
+                timeout:1500,
+                contentType: params.raw?"text/plain":"text/html",
+                processData: false,
+                dataType: 'html',
+                async: params.async ? params.async : true,
+                success: function (data) {
+                    callback(data);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    callback(markdown.toHTML(txt));
+                }
+            });
+        }
+    }
+
     //设置认证信息（用户名密码或者Token）
     this.setAuthorization = function (option) {
         username = option.username;
