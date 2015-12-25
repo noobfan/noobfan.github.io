@@ -36,7 +36,7 @@
         });
 
         Github.listPersonalRepos(null,function (list) {
-
+            Fun.debug(list);
             Github.getContents('noobfan',list[0].name,'/www',null,function(content){
                 Fun.debug(content);
             });
