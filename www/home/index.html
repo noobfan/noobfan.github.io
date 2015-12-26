@@ -30,7 +30,7 @@
 <div id="content"></div>
 <script>
     $(document).ready(function () {
-        //Fun.loadMD("home.md", "content", "iframe");
+        Fun.loadMD("home.md", "content", "iframe");
 
         var user = 'ixou';
         var pwd = 'YoU gUeSs';
@@ -63,7 +63,9 @@
 //                    ret ? Fun.debug(content) : '';
 //                }
 //        );
+
         var testFile='testDir/ssss/ss'
+
 //        Github.createFile(user,
 //                pagesrepo,
 //                {
@@ -75,6 +77,7 @@
 //                    Fun.debug(data) ;
 //                });
 //
+
 //        Github.updateFile(user,
 //                pagesrepo,
 //                {
@@ -85,14 +88,15 @@
 //                function (ret,data) {
 //                    Fun.debug(data) ;
 //                });
-        Github.deleteFile(user,
-                pagesrepo,
-                {
-                    path:testFile,
-                },
-                function (ret,data) {
-                    Fun.debug(data) ;
-                });
+
+//        Github.deleteFile(user,
+//                pagesrepo,
+//                {
+//                    path:testFile,
+//                },
+//                function (ret,data) {
+//                    Fun.debug(data) ;
+//                });
     });
 </script>
 </body>
