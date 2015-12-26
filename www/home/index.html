@@ -13,7 +13,7 @@
     <script src="../lib/respond.js/respond.min.js"></script>
     <![endif]-->
 
-     <!--highlight-->
+    <!--highlight-->
     <link rel="stylesheet" href="../lib/highlight/styles/github-gist.css">
     <script src="../lib/highlight/highlight.pack.js" charset="utf-8"></script>
     <script>hljs.initHighlightingOnLoad();</script>
@@ -30,18 +30,69 @@
 <div id="content"></div>
 <script>
     $(document).ready(function () {
+        //Fun.loadMD("home.md", "content", "iframe");
+
+        var user = 'ixou';
+        var pwd = 'YoU gUeSs';
+        var pagesrepo = user + '.github.io';
+
         Github.setAuthorization({
-            username: "noobfan",
-            password: "fzm269567",
+            username: user,
+            password: pwd,
         });
 
-        Github.listPersonalRepos(null,function (list) {
-            Fun.debug(list);
-            Github.getContents('noobfan',list[0].name,'/www',null,function(content){
-                Fun.debug(content);
-            });
-        });
-        Fun.loadMD("home.md", "content", "iframe");
+//        Github.listPersonalRepos(null, function (ret, list) {
+//            Fun.debug(list[0].name);
+//            Github.getContents(
+//                    user,
+//                    pagesrepo,
+//                    '',//根目录
+//                    null,
+//                    function (ret, content) {
+//                        Fun.debug(content);
+//                    }
+//            )
+//            ;
+//        });
+
+//        Github.createPersonalRepo(
+//                {
+//                    name: 'hello-world',
+//                    homePage: 'noobfan.com'
+//                }, function (ret, content) {
+//                    ret ? Fun.debug(content) : '';
+//                }
+//        );
+        var testFile='testDir/ssss/ss'
+//        Github.createFile(user,
+//                pagesrepo,
+//                {
+//                    path:testFile,
+//                    message:user,
+//                    content:'#create by github api!\n##1234567890\n**qwertyuiopasdfghjklzxcvbnm**'
+//                },
+//                function (ret,data) {
+//                    Fun.debug(data) ;
+//                });
+//
+//        Github.updateFile(user,
+//                pagesrepo,
+//                {
+//                    path:testFile,
+//                    message:user,
+//                    content:'#updateFile by github api!\n##1234567890\n**qwertyuiopasdfghjklzxcvbnm**'
+//                },
+//                function (ret,data) {
+//                    Fun.debug(data) ;
+//                });
+        Github.deleteFile(user,
+                pagesrepo,
+                {
+                    path:testFile,
+                },
+                function (ret,data) {
+                    Fun.debug(data) ;
+                });
     });
 </script>
 </body>
