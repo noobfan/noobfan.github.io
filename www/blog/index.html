@@ -63,11 +63,10 @@
             var setContent=function(data){
                 var content= document.getElementById("content");
                 content.innerHTML=data;
-                Fun.resizeView("iframe");
-            }
+            };
             
             var blog=function() {
-                Fun.readText("blog.json", function (data) {
+                Fun.readText("blog.json", function (ret,data) {
                     var obj = jQuery.parseJSON(data);
                     var list = obj.list;
                     var javaWeb = list[3].JavaWeb;
@@ -81,7 +80,7 @@
                         show += button;
                     }
                     setContent(show);
-                }, false);
+                }, true);
             };
             $(document).ready(function(){
                 blog();

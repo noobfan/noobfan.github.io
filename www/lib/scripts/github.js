@@ -59,8 +59,17 @@ Github = (function () {
         var p;
         if (params && params instanceof Object && ['GET', 'HEAD', 'DELETE'].indexOf(method) > -1) {
             for (var param in params) {
-                if (params.hasOwnProperty(param))
-                    p += '&' + encodeURIComponent(param) + '=' + encodeURIComponent(params[param]);
+                if (params.hasOwnProperty(param)) {
+                    var key = param;
+                    var value = params[param];
+                    if (key && value) {
+                        if (p)
+                            p += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(value);
+                        else
+                            p = encodeURIComponent(key) + '=' + encodeURIComponent(value);
+                    }
+
+                }
             }
         }
         return p;
@@ -69,10 +78,10 @@ Github = (function () {
         if (params == null) params = {};
         var REQUEST_INDEX = "GITHUB REQUEST #" + ++REQUEST_COUNT;
         var url = getURL(path);
-        var data = getParams(method, params);
+        var data = getParams(method, params.data);
         if (data == null)
             data = (params.data instanceof Object ? JSON.stringify(params.data) : params.data);
-        Logger.debug('[-] ' + REQUEST_INDEX + ' -> ' + getURL(path) + (data ? '&' + data : ''));
+        Logger.debug('[+] ' + REQUEST_INDEX + ' -> ' + url + (data ? '&' + data : ''));
         $.ajax(
             {
                 beforeSend: function (xhr) {
@@ -93,11 +102,17 @@ Github = (function () {
                 async: params.async,
                 timeout: params.timeout,
                 success: function (data, textStatus) {
+                    if (data instanceof  Object) {
+                        Logger.debug('[-] ' + REQUEST_INDEX + ' <-  ' + url);
+                        Logger.debug(data);
+                    } else {
+                        Logger.debug('[-] ' + REQUEST_INDEX + ' <-  ' + url + ' <-  ' + data);
+                    }
                     if (callback)
                         callback(true, data);
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    Logger.debug('[X] ' + REQUEST_INDEX + ' -> ' + textStatus + " : " + errorThrown + " ( " + url + ' ) ');
+                    Logger.debug('[X] ' + REQUEST_INDEX + ' <-  ' + url + ' <-  ' + textStatus + " : " + errorThrown);
                     if (callback)
                         callback(false, textStatus + " : " + errorThrown);
                 },
@@ -107,77 +122,83 @@ Github = (function () {
             }
         );
     };
-
-    this.Markdown2Html = function (params, callback) {
-        if (params.text) {
-            convert(params.text);
-        } else if (params.file) {
-            $.ajax({
-                url: params.file,
-                dataType: 'text',
-                async: true,
-                success: function (data, textStatus) {
-                    convert(data);
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                }
-            });
+    /**
+     *
+     * @param content
+     * @param raw
+     * @param callback
+     * @constructor
+     */
+    this.Markdown2Html = function () {
+        var content;
+        var raw;
+        var callback;
+        if (arguments.length == 1) {
+            content = arguments[0];
+        } else if (arguments.length == 2) {
+            content = arguments[0];
+            callback = arguments[1];
+        } else if (arguments.length == 3) {
+            content = arguments[0];
+            raw = arguments[1];
+            callback = arguments[2];
+        } else {
+            return;
         }
-        var convert = function (txt) {
-            var url = '/markdown' + (params.raw ? "/raw" : '');
-            request('POST', url, {
-                    data: params.raw ? txt : {
-                        text: txt,
-                        mode: "gfm",
-                        context: "github/gollum",
-                    },
-                    timeout: 1500,
-                    oauth: false,
-                    progressData: false,
-                    dataType: 'html',
-                    contentType: params.raw ? "text/plain" : "text/html",
-                }, function (ret, data) {
-                    Logger.debug(ret ? 'load from github api' : 'load from markdown.js')
-                    ret ? callback(data) : callback(markdown.toHTML(txt));
-                    $('pre code').each(function (i, block) {
-                        hljs.highlightBlock(block);
-                    });
-                    $('p code').each(function (i, block) {
-                        hljs.highlightBlock(block);
-                    });
-                }
-            )
-        }
+        var url = '/markdown' + (raw ? "/raw" : '');
+        request('POST', url, {
+            data: raw ? content : {
+                text: content,
+                mode: "gfm",
+                context: "github/gollum",
+            },
+            timeout: 2000,
+            oauth: false,
+            progressData: false,
+            dataType: 'html',
+            contentType: raw ? "text/plain" : "text/html",
+        }, callback)
     }
 
-    //ÉèÖÃÈÏÖ¤ÐÅÏ¢£¨ÓÃ»§ÃûÃÜÂë»òÕßToken£©
+    //è®¾ç½®è®¤è¯ä¿¡æ¯ï¼ˆç”¨æˆ·åå¯†ç æˆ–è€…Tokenï¼‰
     this.setAuthorization = function (option) {
         Authorization = option;
     }
-    //ÁÐ³öµ±Ç°ÓÃ»§ËùÓÐ²Ö¿â(°üÀ¨¸öÈËµÄºÍ¹«Ë¾µÄ)
+
+    this.show = function (callback) {
+        var url = '/user';
+        request('GET', url, null, callback);
+    };
+
+    //åˆ—å‡ºå½“å‰ç”¨æˆ·æ‰€æœ‰ä»“åº“(åŒ…æ‹¬ä¸ªäººçš„å’Œå…¬å¸çš„)
     this.listPersonalRepos = function (params, callback) {
         var url = '/user/repos';
         request('GET', url, {data: params}, callback);
     }
-    //ÁÐ³öÖ¸¶¨ÓÃ»§ËùÓÐ¹«¿ª²Ö¿â
+    //åˆ—å‡ºæŒ‡å®šç”¨æˆ·æ‰€æœ‰å…¬å¼€ä»“åº“
     this.listUserRepos = function (username, params, callback) {
         var url = '/users/' + username + '/repos';
         request('GET', url, {data: params}, callback);
     }
-    //ÁÐ³öÖ¸¶¨×éÖ¯»ú¹¹ËùÓÐ²Ö¿â
+    //åˆ—å‡ºæŒ‡å®šç»„ç»‡æœºæž„æ‰€æœ‰ä»“åº“
     this.listOrganizationRepos = function (orgname, params, callback) {
         var url = '/orgs/' + orgname + '/repos';
         request('GET', url, {data: params}, callback);
     }
-    //´´½¨Ò»¸ö¸öÈË²Ö¿â
+    //åˆ›å»ºä¸€ä¸ªä¸ªäººä»“åº“
     this.createPersonalRepo = function (params, callback) {
         var url = '/user/repos';
         request('POST', url, {data: params}, callback);
     }
-    //´´½¨Ò»¸ö×éÖ¯»ú¹¹²Ö¿â
+    //åˆ›å»ºä¸€ä¸ªç»„ç»‡æœºæž„ä»“åº“
     this.createOrganizationRepo = function (orgname, params, callback) {
         var url = '/orgs/' + orgname + '/repos';
-        request('POST ', url, {data: params}, callback);
+        request('POST', url, {data: params}, callback);
+    }
+    //åˆ é™¤ä¸€ä¸ªä»“åº“
+    this.deleteRepo = function (owner, repo, params, callback) {
+        var url = '/repos/' + owner + repo;
+        request('DELETE', url, {data: params}, callback);
     }
 
 
@@ -188,15 +209,16 @@ Github = (function () {
      * @param path
      * @param params    path    :string    The content path.
      *                  ref    :string    The name of the commit/branch/tag.
-     *                           Default: the repository¡¯s default branch (usually master)
+     *                           Default: the repositoryâ€™s default branch (usually master)
      * @param callback
      */
     this.getContents = function (owner, repo, params, callback) {
         var path
-        if (params instanceof Object)
-            path= params.path;
-        else{
-            path=params;
+        if (params instanceof Object) {
+            path = params.path;
+            params = null;
+        } else {
+            path = params;
         }
         path = path ? (( path.substring(0, 1) == '/' ? '' : '/') + encodeURI(path)) : '';
         var url = '/repos/' + owner + '/' + repo + '/contents' + path;
@@ -212,7 +234,7 @@ Github = (function () {
      *                  path    :string    Required. The content path.
      *                  message    :string    Required. The commit message.
      *                  content    :string    Required. The new file content, Base64 encoded.
-     *                  branch    :string    The branch name. Default: the repository¡¯s default branch (usually master)
+     *                  branch    :string    The branch name. Default: the repositoryâ€™s default branch (usually master)
      *
      * @param callback
      */
@@ -228,33 +250,47 @@ Github = (function () {
 
     this.updateFile = function (owner, repo, params, callback) {
         var path = params.path;
-        getContents(owner,repo,path,function(ret,data){
-            if(ret){
+        getContents(owner, repo, path, function (ret, data) {
+            if (ret) {
                 path = path ? (( path.substring(0, 1) == '/' ? '' : '/') + encodeURI(path)) : '';
                 var url = '/repos/' + owner + '/' + repo + '/contents' + path;
                 params.content = Base64Encode(params.content);
-                params.sha=data.sha;
+                params.sha = data.sha;
                 request('PUT', url, {data: params}, callback);
-            }else{
-                callback(ret,data);
+            } else {
+                callback(ret, data);
             }
         });
     }
 
     this.deleteFile = function (owner, repo, params, callback) {
         var path = params.path;
-        getContents(owner,repo,path,function(ret,data){
-            if(ret){
+        getContents(owner, repo, path, function (ret, data) {
+            if (ret) {
                 path = path ? (( path.substring(0, 1) == '/' ? '' : '/') + encodeURI(path)) : '';
                 var url = '/repos/' + owner + '/' + repo + '/contents' + path;
-                params.sha=data.sha;
-                params.message=data.message?data.message:Authorization.username;
-                request('DELETE ', url, {data: params}, callback);
-            }else{
-                callback(ret,data);
+                params.sha = data.sha;
+                params.message = data.message ? data.message : Authorization.username;
+                request('DELETE', url, {data: params}, callback);
+            } else {
+                callback(ret, data);
             }
         });
     }
+
+    this.getTree = function (owner, repo, params, callback) {
+        var tree='master';
+        var recursive=true;
+        if(params){
+            tree=params.branch?params.branch:'master';
+            params.branch=null;
+            if(params.recursive)
+                recursive=params.recursive;
+        }
+        var url = '/repos/' + owner + '/' + repo + '/git/trees/' + tree;
+        request('GET', url, {data:{recursive:recursive}}, callback);
+    }
+
     return this;
 }
 ());

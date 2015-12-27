@@ -30,74 +30,102 @@
 <div id="content"></div>
 <script>
     $(document).ready(function () {
-        Fun.loadMD("home.md", "content", "iframe");
+        //Fun.loadMD("home.md", "content", "iframe");
 
         var user = 'ixou';
         var pwd = 'YoU gUeSs';
-        var pagesrepo = user + '.github.io';
-
+        var userrepo = user + '.github.io';
+        var webrepo = 'website';;
+        var testFile = 'dir.markdown.md';
         Github.setAuthorization({
             username: user,
             password: pwd,
         });
 
+        Github.getTree(user, userrepo, null, function (ret, data) {
+            //    Fun.debug(data);
+        });
+        Github.getTree(user, userrepo, {recursive:2}, function (ret, data) {
+        //    Fun.debug(data);
+        });
+//        Github.show();
 //        Github.listPersonalRepos(null, function (ret, list) {
-//            Fun.debug(list[0].name);
-//            Github.getContents(
-//                    user,
-//                    pagesrepo,
-//                    '',//根目录
-//                    null,
-//                    function (ret, content) {
-//                        Fun.debug(content);
+//            if (ret) {
+//                //Fun.debug(list);
+//                for (var i = 0; i < list.length; i++) {
+//                    if (list[i].name == pagesrepo) {
+//                        Github.getTree(user, pagesrepo, {recursive:1}, function (ret, data) {
+//                            if (ret) {
+////                                Github.getContents(
+////                                        user,
+////                                        pagesrepo,
+////                                        testFile,//根目录
+////                                        function (ret, content) {
+////                                            Fun.debug(content);
+////                                        });
+//                            } else {
+////                                Github.createFile(user, pagesrepo,
+////                                        {
+////                                            path:testFile ,
+////                                            message: user,
+////                                            content: '#this is ' + user
+////                                        }, function (ret, data) {
+////                                            if(ret){
+////
+////                                            }
+////                                        });
+//                            }
+//                        })
+//                        break;
 //                    }
-//            )
-//            ;
+//                }
+//            } else {
+//                Fun.debug(list);
+//            }
 //        });
 
-//        Github.createPersonalRepo(
-//                {
-//                    name: 'hello-world',
-//                    homePage: 'noobfan.com'
-//                }, function (ret, content) {
-//                    ret ? Fun.debug(content) : '';
-//                }
-//        );
+        //        Github.createPersonalRepo(
+        //                {
+        //                    name: 'hello-world',
+        //                    homePage: 'noobfan.com'
+        //                }, function (ret, content) {
+        //                    ret ? Fun.debug(content) : '';
+        //                }
+        //        );
 
-        var testFile='testDir/ssss/ss'
+        //        Github.createFile(user,
+        //                pagesrepo,
+        //                {
+        //                    path:testFile,
+        //                    message:user,
+        //                    content:'#create by github api!\n##1234567890\n**qwertyuiopasdfghjklzxcvbnm**'
+        //                },
+        //                function (ret,data) {
+        //                    Fun.debug(data) ;
+        //                });
+        //
 
-//        Github.createFile(user,
-//                pagesrepo,
-//                {
-//                    path:testFile,
-//                    message:user,
-//                    content:'#create by github api!\n##1234567890\n**qwertyuiopasdfghjklzxcvbnm**'
-//                },
-//                function (ret,data) {
-//                    Fun.debug(data) ;
-//                });
-//
+        //        Github.updateFile(user,
+        //                pagesrepo,
+        //                {
+        //                    path:testFile,
+        //                    message:user,
+        //                    content:'#updateFile by github api!\n##1234567890\n**qwertyuiopasdfghjklzxcvbnm**'
+        //                },
+        //                function (ret,data) {
+        //                    Fun.debug(data) ;
+        //                });
 
-//        Github.updateFile(user,
-//                pagesrepo,
-//                {
-//                    path:testFile,
-//                    message:user,
-//                    content:'#updateFile by github api!\n##1234567890\n**qwertyuiopasdfghjklzxcvbnm**'
-//                },
-//                function (ret,data) {
-//                    Fun.debug(data) ;
-//                });
-
-//        Github.deleteFile(user,
-//                pagesrepo,
-//                {
-//                    path:testFile,
-//                },
-//                function (ret,data) {
-//                    Fun.debug(data) ;
-//                });
-    });
+        //        Github.deleteFile(user,
+        //                pagesrepo,
+        //                {
+        //                    path:testFile,
+        //                },
+        //                function (ret,data) {
+        //                    Fun.debug(data) ;
+        //                });
+    })
+    ;
 </script>
 </body>
 </html>

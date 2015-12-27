@@ -1,4 +1,3 @@
-
 var Fun = {};
 Fun.debug = function (log) {
     // return;
@@ -44,7 +43,17 @@ Fun.replaceHtml = function (s) {
     s = s.replace(/\n/g, "<br/>");
     return s;
 };
-Fun.resizeView = function (id) {
+Fun.resizeIframe = function (iframeId) {
+    var ifm = document.getElementById(iframeId);
+    var subWeb = document.frames ? document.frames[iframeId].document : ifm.contentDocument;
+    if (ifm && subWeb) {
+        ifm.height = subWeb.body.scrollHeight;
+        ifm.width = subWeb.body.scrollWidth;
+    }else{
+        Fun.debug(ifm+subWeb);
+    }
+}
+Fun.resizeParentIframe = function (iframeId) {
     if (id)
         $(function () {
             if (window.parent != window) {
@@ -57,6 +66,7 @@ Fun.resizeView = function (id) {
                 }
             }
         });
+
 };
 
 Fun.imgLoaded = function (callback) {
@@ -72,13 +82,14 @@ Fun.readText = function (file, callback, async) {
             $.ajax({
                 url: file,
                 dataType: 'text',
-                async: async ? true : false,
+                async: async ? async : true,
                 success: function (data, textStatus) {
-                    //Fun.debug("load file done:"+file);
-                    callback(data);
+                    if (callback)
+                        callback(true, data);
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    //Fun.debug("load file error:" + errorThrown);
+                    if (callback)
+                        callback(false, textStatus + " " + errorThrown);
                 }
             });
         });
@@ -88,22 +99,49 @@ Fun.readText = function (file, callback, async) {
 };
 
 
-
 Fun.loadMD = function (fromFile, toElementID, iframe) {
-    Github.Markdown2Html(
-        {
-            file:fromFile,
-            raw:true
-        },
-        function(data){
-            var content = document.getElementById(toElementID)
-            content.innerHTML = data;
+    Fun.readText(fromFile, function (ret, text) {
+        if (text) {
+            Github.Markdown2Html(text,true, function (ret, data) {
+                    Fun.debug(ret ? 'load from github api' : 'load from markdown.js')
+                    data = ret ? data : markdown.toHTML(text);
+                    var content = document.getElementById(toElementID)
+                    content.innerHTML = data;
+                    $('pre code').each(function (i, block) {
+                        hljs.highlightBlock(block);
+                    });
+                    $('p code').each(function (i, block) {
+                        hljs.highlightBlock(block);
+                    });
+                }
+            )
+        } else {
 
-            Fun.imgLoaded(function () {
-                Fun.resizeView(iframe)
-            });
-            Fun.resizeView(iframe);
         }
-    )
+    });
 };
+
+
+Fun.isMobile = function () {
+    var MobileAgent = new Array(
+        "iphone", "ipod", "ipad", "android", "mobile",
+        "blackberry", "webos", "incognito", "webmate",
+        "bada", "nokia", "lg", "ucweb", "skyfire"
+    );
+    var UA = navigator.userAgent.toLowerCase();
+    for (var i = 0; i < MobileAgent.length; i++) {
+        if (UA.indexOf(MobileAgent[i]) != -1) {
+            return true;
+            ;
+        }
+    }
+    return false;
+};
+Fun.redirect = function (www, mobile) {
+    if (isMobile() && mobile) {
+        location.href += mobile;
+    } else {
+        location.href += www;
+    }
+}
 
