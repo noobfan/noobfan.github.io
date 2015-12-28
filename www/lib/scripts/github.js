@@ -1,5 +1,3 @@
-
-
 Github = (function () {
         var Logger = {
             debug: function (log) {
@@ -47,7 +45,7 @@ Github = (function () {
             }
             return base64decode(str);
         };
-        var GetXmlHttpRequest=function(){
+        var GetXmlHttpRequest = function () {
             var xhr = null;
             if (window.XMLHttpRequest) {// code for all new browsers
                 xhr = new XMLHttpRequest();
@@ -74,7 +72,7 @@ Github = (function () {
             var self = this;
             var hook = null;
             var xhr = getXmlHttpRequest();
-            if(!xhr) return null;
+            if (!xhr) return null;
 
             CheckOption(option);
 
@@ -91,6 +89,7 @@ Github = (function () {
                 option.method = method;
                 option.url = url;
                 option.data = params;
+                xhr.open(option.method, option.url, option.async);
                 if (option.async) {
                     xhr.onreadystatechange = function () {
                         if (xhr.readyState == 4) {// 4 = "loaded"
@@ -103,25 +102,17 @@ Github = (function () {
                             }
                         }
                     }
-                    xhr.open(method, url, true);
+                    if(option.data)
+                        xhr.send(option.data);
+                    else
+                        xhr.send();
                     return self;
                 } else {
-                    xhr.open(method, url, false);
-                    return xhr.send(params);
+                    if(option.data)
+                        return xhr.send(option.data);
+                    else
+                        return xhr.send();
                 }
-            }
-            this.get = function (url, params) {
-                return request('GET', url, params);
-            }
-
-            this.post = function (url, params) {
-                return request('POST', url, params);
-            }
-            this.put = function (url, params) {
-                return request('PUT', url, params);
-            }
-            this.delete = function (url, params) {
-                return request('DELETE', url, params);
             }
             return self;
         }
@@ -136,12 +127,8 @@ Github = (function () {
             ContentType: 'application/json;charset=UTF-8',
         }
 
-        var Request = function () {
-            HttpRequest.call(this);
-
-        }
         var getURL = function (path, timestamp) {
-            var url = path.indexOf('//') >= 0 ? path : APIURL + path;
+            var url = path.indexOf('//') >= 0 ? path : API.HOST + path;
             url += ((/\?/).test(url) ? '&' : '?');
             timestamp = timestamp ? (typeof window !== 'undefined' ? 'timestamp=' + new Date().getTime() : '') : '';
             return url.replace(/(&timestamp=\d+)/, '') + timestamp;
@@ -164,6 +151,26 @@ Github = (function () {
                 }
             }
             return p;
+        }
+
+        var request = function (option) {
+            HttpRequest.call(this);
+            var req=function(method, url, params){
+                request(method, getURL(url), params);
+            };
+            this.get = function (url, params) {
+                return request('GET', url, getParams(params));
+            }
+
+            this.post = function (url, params) {
+                return request('POST', url, JSON.stringify(params));
+            }
+            this.put = function (url, params) {
+                return request('PUT', url, JSON.stringify(params));
+            }
+            this.delete = function (url, params) {
+                return request('DELETE', url, getParams(params));
+            }
         }
 //--------------------------------------------------------------------------------------------------------------------
         var request = function (method, path, params, option) {
