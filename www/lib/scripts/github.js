@@ -1,418 +1,388 @@
 Github = (function () {
-        var Logger = {
-            debug: function (log) {
-                console.log(log);
-            }
+    var Logger = {
+        debug: function (log) {
+            console.log(log);
         }
-        this.Base64Encode = function (str) {
-            var base64encode;
-            if (typeof define === 'function' && define.amd) {
-                define(['js-base64'], function (encode) {
-                    base64encode = encode.Base64.encode;
-                });
-            } else if (typeof module === 'object' && module.exports) {
-                if (typeof window !== 'undefined') {
-                    base64encode = window.btoa;
-                } else {
-                    base64encode = require('js-base64').Base64.encode;
-                }
+    }
+    this.Base64Encode = function (str) {
+        var base64encode;
+        if (typeof define === 'function' && define.amd) {
+            define(['js-base64'], function (encode) {
+                base64encode = encode.Base64.encode;
+            });
+        } else if (typeof module === 'object' && module.exports) {
+            if (typeof window !== 'undefined') {
+                base64encode = window.btoa;
             } else {
-                base64encode = function (str) {
-                    return this.btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p1) {
-                        return String.fromCharCode('0x' + p1);
-                    }));
-                };
+                base64encode = require('js-base64').Base64.encode;
             }
-            return base64encode(str);
-        };
-
-        this.Base64Decode = function (str) {
-            var base64decode;
-            if (typeof define === 'function' && define.amd) {
-                define(['js-base64'], function (decode) {
-                    base64decode = decode.Base64.decode;
-                });
-            } else if (typeof module === 'object' && module.exports) {
-                if (typeof window !== 'undefined') {
-                    base64decode = window.atob;
-                } else {
-                    base64decode = require('js-base64').Base64.decode;
-                }
-            } else {
-                base64decode = function (str) {
-                    return decodeURIComponent(this.atob(str));
-                };
-            }
-            return base64decode(str);
-        };
-        var GetXmlHttpRequest = function () {
-            var xhr = null;
-            if (window.XMLHttpRequest) {// code for all new browsers
-                xhr = new XMLHttpRequest();
-            } else if (window.ActiveXObject) {// code for IE5 and IE6
-                xhr = new ActiveXObject("Microsoft.XMLHTTP");
-            } else {
-                Logger.debug("[X] Browser does not support XMLHttpRequest.");
-                return null;
-            }
-            return xhr;
+        } else {
+            base64encode = function (str) {
+                return this.btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p1) {
+                    return String.fromCharCode('0x' + p1);
+                }));
+            };
         }
-        var CheckOption = function (option) {
-            if (!option) option = {};
-            option.method = option.method;
-            option.url = option.url;
-            option.data = option.data;
-            option.contentType = option.contentType;
-            option.dataType = option.dataType;
-            option.async = option.async ? option.async : true;
-            option.timeout = option.timeout ? option.timeout : 1500;
-            return option;
+        return base64encode(str);
+    };
+
+    this.Base64Decode = function (str) {
+        var base64decode;
+        if (typeof define === 'function' && define.amd) {
+            define(['js-base64'], function (decode) {
+                base64decode = decode.Base64.decode;
+            });
+        } else if (typeof module === 'object' && module.exports) {
+            if (typeof window !== 'undefined') {
+                base64decode = window.atob;
+            } else {
+                base64decode = require('js-base64').Base64.decode;
+            }
+        } else {
+            base64decode = function (str) {
+                return decodeURIComponent(this.atob(str));
+            };
+        }
+        return base64decode(str);
+    };
+    var getXmlHttpRequest = function () {
+        var xhr = null;
+        if (window.XMLHttpRequest) {// code for all new browsers
+            xhr = new XMLHttpRequest();
+        } else if (window.ActiveXObject) {// code for IE5 and IE6
+            xhr = new ActiveXObject("Microsoft.XMLHTTP");
+        } else {
+            Logger.debug("[X] Browser does not support XMLHttpRequest.");
+            return null;
+        }
+        return xhr;
+    }
+
+    var CheckOption = function (option) {
+        if (!option) option = {};
+        option.oauth = option.oauth ? option.oauth : true;
+        option.method = option.method;
+        option.url = option.url;
+        option.data = option.data;
+        option.contentType = option.contentType;
+        option.dataType = option.dataType;
+        option.charSet = option.charSet;
+        option.async = option.async ? option.async : true;
+        option.timeout = option.timeout ? option.timeout : 1500;
+        return option;
+    };
+    var HttpRequest = function (option) {
+        var self = this;
+        var hook = null;
+        var xhr = getXmlHttpRequest();
+        if (!xhr) return null;
+        var headers = new Array();
+
+        option = CheckOption(option);
+
+        this.callback = function (cb) {
+            if (option.async)
+                hook = cb;
+            else
+                Logger.debug("[!] [" + option.url + '] is not async!');
         };
-        var HttpRequest = function (option) {
-            var self = this;
-            var hook = null;
-            var xhr = getXmlHttpRequest();
-            if (!xhr) return null;
 
-            CheckOption(option);
+        this.addHeader = function (key, value) {
+            if (key && value) {
+                headers[headers.length] = {key: key, value: value};
+            }
+        };
 
-            this.addHeader = function (header, value) {
-                xhr.setRequestHeader(header, value);
-            };
-            this.callback = function (cb) {
-                if (option.async)
-                    hook = cb;
-                else
-                    Logger.debug("[!] [" + option.url + '] is not async!');
-            };
-            this.request = function (method, url, params) {
-                option.method = method;
-                option.url = url;
-                option.data = params;
-                xhr.open(option.method, option.url, option.async);
-                if (option.async) {
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState == 4) {// 4 = "loaded"
-                            if (xhr.status >= 200 && xhr.status < 300 || xhr.status === 304) {
-                                if (hook)
-                                    hook(true, xhr.responseText);
-                            } else {
-                                if (hook)
-                                    hook(false, xhr.status, xhr.responseText);
+        this.request = function (method, url, params) {
+            option.method = method;
+            option.url = url;
+            option.data = params;
+            API.REQUEST_COUNT++;
+            var REQUEST_INDEX = API.REQUEST_COUNT;
+            if (option.async) {
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == xhr.DONE) {
+                        try {
+                            var resp = JSON.parse(xhr.responseText);
+                        } catch (thrown) {
+                            resp = xhr.responseText;
+                        }
+                        if (xhr.status >= 200 && xhr.status < 300 || xhr.status === 304) {
+                            Logger.debug('[-] #' + REQUEST_INDEX + ' ' + option.url);
+                            Logger.debug(resp);
+                            if (hook)
+                                hook(true, resp);
+                        } else {
+                            Logger.debug('[X] #' + REQUEST_INDEX + ' ' + option.url);
+                            Logger.debug(xhr.status + ': ' + (resp instanceof Object ? resp.message : resp));
+                            if (hook) {
+                                hook(false, resp);
                             }
                         }
                     }
-                    if(option.data)
-                        xhr.send(option.data);
-                    else
-                        xhr.send();
-                    return self;
-                } else {
-                    if(option.data)
-                        return xhr.send(option.data);
-                    else
-                        return xhr.send();
                 }
-            }
-            return self;
-        }
-
-        var API = {
-            HOST: 'https://api.github.com',
-            VERSION: 'v3',
-            REQUEST_COUNT: 0,
-            Authorization: null,
-            MediaType: null,
-            Accept: 'application/vnd.github.' + VERSION + (MediaType ? '.' + MediaType : '') + '+json',
-            ContentType: 'application/json;charset=UTF-8',
-        }
-
-        var getURL = function (path, timestamp) {
-            var url = path.indexOf('//') >= 0 ? path : API.HOST + path;
-            url += ((/\?/).test(url) ? '&' : '?');
-            timestamp = timestamp ? (typeof window !== 'undefined' ? 'timestamp=' + new Date().getTime() : '') : '';
-            return url.replace(/(&timestamp=\d+)/, '') + timestamp;
-        }
-        var getParams = function (method, params) {
-            var p;
-            if (params && params instanceof Object && ['GET', 'HEAD', 'DELETE'].indexOf(method) > -1) {
-                for (var param in params) {
-                    if (params.hasOwnProperty(param)) {
-                        var key = param;
-                        var value = params[param];
-                        if (key && value) {
-                            if (p)
-                                p += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(value);
-                            else
-                                p = encodeURIComponent(key) + '=' + encodeURIComponent(value);
-                        }
-
+                xhr.open(option.method, option.url, option.async);
+                for (var i = 0; i < headers.length; i++) {
+                    var header = headers[i];
+                    var key = header.key;
+                    var value = header.value;
+                    if (key && value) {
+                        xhr.setRequestHeader(key, value);
                     }
                 }
-            }
-            return p;
-        }
 
-        var request = function (option) {
-            HttpRequest.call(this);
-            var req=function(method, url, params){
-                request(method, getURL(url), params);
-            };
-            this.get = function (url, params) {
-                return request('GET', url, getParams(params));
-            }
-
-            this.post = function (url, params) {
-                return request('POST', url, JSON.stringify(params));
-            }
-            this.put = function (url, params) {
-                return request('PUT', url, JSON.stringify(params));
-            }
-            this.delete = function (url, params) {
-                return request('DELETE', url, getParams(params));
-            }
-        }
-//--------------------------------------------------------------------------------------------------------------------
-        var request = function (method, path, params, option) {
-            if (option == null) option = {};
-            var REQUEST_INDEX = "GITHUB REQUEST #" + ++REQUEST_COUNT;
-            var url = getURL(path);
-            var data = getParams(method, params);
-            if (data == null)
-                data = (params instanceof Object ? JSON.stringify(params) : params);
-            Logger.debug('[+] ' + REQUEST_INDEX + ' -> ' + url + (data ? '&' + data : ''));
-            $.ajax(
-                {
-                    beforeSend: function (xhr) {
-                        if ((option.oauth ? option.oauth : true) && Authorization && Authorization.username && Authorization.password) {
-                            var type = option.mediaType ? '.' + option.mediaType : '';
-                            var accept = 'application/vnd.github.' + APIVERSION + type + '+json';
-                            xhr.setRequestHeader('Accept', accept);
-                            var authorization = 'Basic ' + Base64Encode(Authorization.username + ':' + Authorization.password);
-                            xhr.setRequestHeader('Authorization', authorization);
-                        }
-                    },
-                    type: method,
-                    url: url,
-                    data: data,
-                    contentType: (option.contentType ? option.contentType : 'application/json') + ';charset=UTF-8',
-                    dataType: option.dataType ? option.dataType : "json",
-                    processData: option.processData,
-                    async: option.async,
-                    timeout: option.timeout,
-                    success: function (data, textStatus) {
-                        if (data instanceof  Object) {
-                            Logger.debug('[-] ' + REQUEST_INDEX + ' <-  ' + url);
-                            Logger.debug(data);
-                        } else {
-                            Logger.debug('[-] ' + REQUEST_INDEX + ' <-  ' + url + ' <-  ' + data);
-                        }
-                        if (callback)
-                            callback(true, data);
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        Logger.debug('[X] ' + REQUEST_INDEX + ' <-  ' + url + ' <-  ' + textStatus + " : " + errorThrown);
-                        if (callback)
-                            callback(false, textStatus + " : " + errorThrown);
-                    },
-                    complete: function () {
-
-                    }
-                }
-            );
-        };
-        /**
-         *
-         * @param content
-         * @param raw
-         * @param callback
-         * @constructor
-         */
-        this.Markdown2Html = function () {
-            var content;
-            var raw;
-            var callback;
-            if (arguments.length == 1) {
-                content = arguments[0];
-            } else if (arguments.length == 2) {
-                content = arguments[0];
-                callback = arguments[1];
-            } else if (arguments.length == 3) {
-                content = arguments[0];
-                raw = arguments[1];
-                callback = arguments[2];
+                if (option.data)
+                    xhr.send(option.data);
+                else
+                    xhr.send();
+                Logger.debug('[+] #' + REQUEST_INDEX + ' ' + option.url);
+                if (option.data)
+                    Logger.debug(option.data);
+                return self;
             } else {
-                return;
+                if (option.data)
+                    return xhr.send(option.data);
+                else
+                    return xhr.send();
             }
-            var url = '/markdown' + (raw ? "/raw" : '');
-            request('POST', url, {
-                data: raw ? content : {
-                    text: content,
-                    mode: "gfm",
-                    context: "github/gollum",
-                },
-                timeout: 2000,
-                oauth: false,
-                progressData: false,
-                dataType: 'html',
-                contentType: raw ? "text/plain" : "text/html",
-            }, callback)
         }
+        if (option.dataType)
+            xhr.dataType = option.dataType;
+        if (option.contentType) {
+            var type = option.contentType + ';charset=' + (option.charSet ? option.charSet : 'UTF-8');
+            this.addHeader('Content-Type', option.contentType);
+        }
+        return self;
+    }
+
+    var API = {
+        HOST: 'https://api.github.com',
+        VERSION: 'v3',
+        REQUEST_COUNT: 0,
+        Authorization: null,
+        MediaType: null,
+        Accept: 'application/vnd.github.' + this.VERSION + (this.MediaType ? this.MediaType : '') + '+json',
+        ContentType: 'application/json;charset=UTF-8',
+    }
+
+    var getURL = function (path, timestamp) {
+        var url = path.indexOf('//') >= 0 ? path : API.HOST + path;
+        url += ((/\?/).test(url) ? '&' : '?');
+        timestamp = timestamp ? (typeof window !== 'undefined' ? 'timestamp=' + new Date().getTime() : '') : '';
+        return url.replace(/(&timestamp=\d+)/, '') + timestamp;
+    }
+    var getParams = function (method, params) {
+        var p;
+        if (params && params instanceof Object && ['GET', 'HEAD', 'DELETE'].indexOf(method) > -1) {
+            for (var param in params) {
+                if (params.hasOwnProperty(param)) {
+                    var key = param;
+                    var value = params[param];
+                    if (key && value) {
+                        if (p)
+                            p += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(value);
+                        else
+                            p = encodeURIComponent(key) + '=' + encodeURIComponent(value);
+                    }
+
+                }
+            }
+        }
+        return p;
+    }
+
+    var http = function (option) {
+        if (!option) option = {};
+        HttpRequest.call(this, option);
+        var self = this;
+
+        var type = API.MediaType ? '.' + API.MediaType : '';
+        var accept = 'application/vnd.github.' + API.VERSION + type + '+json';
+        addHeader('Accept', accept);
+
+        if (option.oauth) {
+            var oauth = API.Authorization;
+            var authorization = oauth.token ? 'token ' + oauth.token :
+            'Basic ' + Base64Encode(oauth.username + ':' + oauth.password)
+            addHeader('Authorization', authorization);
+        }
+        if (!option.dataType)
+            option.dataType = 'json';
+        if (!option.contentType)
+            option.contentType = 'application/json';
+
+        var Request = function (method, url, params) {
+            return request(method, getURL(url), params);
+        };
+        this.get = function (url, params) {
+            return Request('GET', url, getParams(params));
+        }
+        this.post = function (url, params) {
+            return Request('POST', url, params instanceof Object ? JSON.stringify(params) : params);
+        }
+        this.put = function (url, params) {
+            return Request('PUT', url, params instanceof Object ? JSON.stringify(params) : params);
+        }
+        this.delete = function (url, params) {
+            return Request('DELETE', url, getParams(params));
+        }
+        return self;
+    }
+//--------------------------------------------------------------------------------------------------------------------
+
+    /**
+     *
+     * @param content
+     * @param raw
+     * @param callback
+     * @constructor
+     */
+    this.Markdown2Html = function (content, raw) {
+        var self = this;
+        var url = '/markdown' + (raw ? "/raw" : '');
+        this.callback = http({
+            timeout: 2000,
+            oauth: false,
+            dataType: 'html',
+            contentType: raw ? 'text/plain' : 'text/html',
+        }).post(url, raw ? content : {
+                text: content,
+                mode: "gfm",
+                context: "github/gollum",
+            }
+        ).callback;
+        return self;
+    }
 
 //设置认证信息（用户名密码或者Token）
-        this.setAuthorization = function (option) {
-            Authorization = option;
-        }
+    this.setAuthorization = function (option) {
+        API.Authorization = option;
+    }
 
 //--------------------------------------------------------------------------------------------------------------------
 
+    this.show = function (callback) {
+        var self = this;
+        var url = '/user';
+        this.callback = http().get(url).callback;
+        return self;
+    };
 
-        this.show = function (callback) {
-            var url = '/user';
-            request('GET', url, null, callback);
-        };
-
-//列出当前用户所有仓库(包括个人的和公司的)
-        this.listPersonalRepos = function (params, callback) {
-            var url = '/user/repos';
-            request('GET', url, {data: params}, callback);
-        }
-//列出指定用户所有公开仓库
-        this.listUserRepos = function (username, params, callback) {
-            var url = '/users/' + username + '/repos';
-            request('GET', url, {data: params}, callback);
-        }
-//列出指定组织机构所有仓库
-        this.listOrganizationRepos = function (orgname, params, callback) {
-            var url = '/orgs/' + orgname + '/repos';
-            request('GET', url, {data: params}, callback);
-        }
-//创建一个个人仓库
-        this.createPersonalRepo = function (params, callback) {
-            var url = '/user/repos';
-            request('POST', url, {data: params}, callback);
-        }
-//创建一个组织机构仓库
-        this.createOrganizationRepo = function (orgname, params, callback) {
-            var url = '/orgs/' + orgname + '/repos';
-            request('POST', url, {data: params}, callback);
-        }
-        this.getRepo = function (owner, repo) {
-            return new Repository(owner, repo);
-        }
-
-        function Fun(s1, s2) {
-            var str = s1 + s2;
-        }
-
-        var Repository = function (ownerName, repoName) {
-
-            this.execute = function (callback) {
-                setTimeout(function () {
-                    callback(str);
-                }, 1000);
-            };
-            this.run = this.execute;
-
-            var base_url = '/repos/' + owner + '/' + repo;
-
-            this.delete = function (callback) {
-                request('DELETE', url, null, callback);
-            }
-            /**
-             *
-             * @param owner
-             * @param repo
-             * @param path
-             * @param params    path    :string    The content path.
-             *                  ref    :string    The name of the commit/branch/tag.
-             *                           Default: the repository’s default branch (usually master)
-             * @param callback
-             */
-            this.getContents = function (params, callback) {
-                var path
-                if (params instanceof Object) {
-                    path = params.path;
-                    params = null;
-                } else {
-                    path = params;
-                }
-                path = path ? (( path.substring(0, 1) == '/' ? '' : '/') + encodeURI(path)) : '';
-                var url = '/repos/' + owner + '/' + repo + '/contents' + path;
-                request('GET', url, {data: params}, callback);
-            }
-
-            /**
-             *
-             * @param owner
-             * @param repo     repo name
-             * @param path     rootpath
-             * @param params
-             *                  path    :string    Required. The content path.
-             *                  message    :string    Required. The commit message.
-             *                  content    :string    Required. The new file content, Base64 encoded.
-             *                  branch    :string    The branch name. Default: the repository’s default branch (usually master)
-             *
-             * @param callback
-             */
-            this.createFile = function (owner, repo, params, callback) {
-                if (params) {
-                    var path = params.path;
-                    path = path ? (( path.substring(0, 1) == '/' ? '' : '/') + encodeURI(path)) : '';
-                    var url = '/repos/' + owner + '/' + repo + '/contents' + path;
-                    params.content = Base64Encode(params.content);
-                    request('PUT', url, {data: params}, callback);
-                }
-            }
-
-            this.updateFile = function (owner, repo, params, callback) {
-                var path = params.path;
-                getContents(owner, repo, path, function (ret, data) {
-                    if (ret) {
-                        path = path ? (( path.substring(0, 1) == '/' ? '' : '/') + encodeURI(path)) : '';
-                        var url = '/repos/' + owner + '/' + repo + '/contents' + path;
-                        params.content = Base64Encode(params.content);
-                        params.sha = data.sha;
-                        request('PUT', url, {data: params}, callback);
-                    } else {
-                        callback(ret, data);
-                    }
-                });
-            }
-
-            this.deleteFile = function (owner, repo, params, callback) {
-                var path = params.path;
-                getContents(owner, repo, path, function (ret, data) {
-                    if (ret) {
-                        path = path ? (( path.substring(0, 1) == '/' ? '' : '/') + encodeURI(path)) : '';
-                        var url = '/repos/' + owner + '/' + repo + '/contents' + path;
-                        params.sha = data.sha;
-                        params.message = data.message ? data.message : Authorization.username;
-                        request('DELETE', url, {data: params}, callback);
-                    } else {
-                        callback(ret, data);
-                    }
-                });
-            }
-
-            this.getTree = function (owner, repo, params, callback) {
-                var tree = 'master';
-                var recursive = true;
-                if (params) {
-                    tree = params.branch ? params.branch : 'master';
-                    params.branch = null;
-                    if (params.recursive)
-                        recursive = params.recursive;
-                }
-                var url = '/repos/' + owner + '/' + repo + '/git/trees/' + tree;
-                request('GET', url, {data: {recursive: recursive}}, callback);
-            }
-
-        };
-
-
-        return this;
+    this.listPersonalRepos = function (params, callback) {
+        var self = this;
+        var url = '/user/repos';
+        this.callback = http().get(url, params).callback;
+        return self;
     }
-    ()
-)
-;
+
+    this.listUserRepos = function (username, params, callback) {
+        var self = this;
+        var url = '/users/' + username + '/repos';
+        this.callback = http().get(url, params).callback;
+        return self;
+    }
+
+    this.listOrganizationRepos = function (orgname, params, callback) {
+        var self = this;
+        var url = '/orgs/' + orgname + '/repos';
+        this.callback = http().get(url, params).callback;
+        return self;
+    }
+
+    this.createPersonalRepo = function (params, callback) {
+        var self = this;
+        var url = '/user/repos';
+        this.callback = http().post(url, params).callback;
+        return self;
+    }
+
+    this.createOrganizationRepo = function (orgname, params, callback) {
+        var self = this;
+        var url = '/orgs/' + orgname + '/repos';
+        this.callback = http().post(url, params).callback;
+        return self;
+    }
+
+//--------------------------------------------------------------------------------------------------------------------
+    this.getRepo = function (owner, repo) {
+        return new Repository(owner, repo);
+    }
+
+    var Repository = function (ownerName, repoName) {
+        var self = this;
+        var base_url = '/repos/' + owner + '/' + repo;
+        var getPath = function (path, param) {
+            param = param ? (( param.substring(0, 1) == '/' ? '' : '/') + encodeURI(param)) : '';
+            return base_url + path + param;
+        }
+        this.delete = function () {
+            var thiz = this;
+            var url = getPath();
+            this.callback = http().delete(url).callback;
+            return thiz;
+        }
+
+        this.getContents = function (path, ref) {
+            var thiz = this;
+            var url = getPath('/contents', path);
+            this.callback = http().get(url).callback;
+            return thiz;
+        }
+
+        this.createFile = function (path, message, content, branch) {
+            var thiz = this;
+            var url = getPath('/contents', path);
+            this.callback = http().put(url, {message: message, content: content, branch: branch}).callback;
+            return thiz;
+        }
+
+        this.updateFile = function (path, content) {
+            var thiz = this;
+            var hook;
+            this.callback = function (cb) {
+                hook = cb;
+            }
+            getContents(path).callback(function (ret, data) {
+                if (ret) {
+                    var url = getPath('/contents', path);
+                    http().put(url, {content: content, sha: data.sha}).callback(hook);
+                } else {
+                    if (hook)
+                        hook(ret, data);
+                }
+            });
+            return thiz;
+        }
+
+        this.deleteFile = function (path) {
+            var thiz = this;
+            var hook;
+            this.callback = function (cb) {
+                hook = cb;
+            }
+            getContents(owner, repo, path, function (ret, data) {
+                if (ret) {
+                    var url = getPath('/contents', path);
+                    http().delete(url, {
+                        message: data.message ? data.message : Authorization.username,
+                        sha: data.sha
+                    }).callback(hook);
+                } else {
+                    if (hook)
+                        hook(ret, data);
+                }
+            });
+        }
+
+        this.getTree = function (tree, recursive) {
+            var thiz = this;
+            var url = getPath('/git/trees/', tree ? tree : 'master');
+            this.callback = http().get(url, {recursive: recursive ? recursive : true}).callback;
+            return thiz;
+        }
+
+    };
+//--------------------------------------------------------------------------------------------------------------------
+
+    return self;
+}());

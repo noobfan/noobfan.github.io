@@ -49,8 +49,8 @@ Fun.resizeIframe = function (iframeId) {
     if (ifm && subWeb) {
         ifm.height = subWeb.body.scrollHeight;
         ifm.width = subWeb.body.scrollWidth;
-    }else{
-        Fun.debug(ifm+subWeb);
+    } else {
+        Fun.debug(ifm + subWeb);
     }
 }
 Fun.resizeParentIframe = function (iframeId) {
@@ -102,10 +102,11 @@ Fun.readText = function (file, callback, async) {
 Fun.loadMD = function (fromFile, toElementID, iframe) {
     Fun.readText(fromFile, function (ret, text) {
         if (text) {
-            Github.Markdown2Html(text,true, function (ret, data) {
-                    Fun.debug(ret ? 'load from github api' : 'load from markdown.js')
+            Github.Markdown2Html(text, true)
+                .callback(function (ret, data) {
+                    Fun.debug(ret ? 'load from github api' : 'load from markdown.js');
                     data = ret ? data : markdown.toHTML(text);
-                    var content = document.getElementById(toElementID)
+                    var content = document.getElementById(toElementID);
                     content.innerHTML = data;
                     $('pre code').each(function (i, block) {
                         hljs.highlightBlock(block);
