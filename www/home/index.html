@@ -28,11 +28,13 @@
         >
 </video>
 
-<input type="file" name="upfile" id="upfile"  multiple="multiple" onchange="selectedFile(this)" />
+<input type="file" name="upfile" id="upfile" multiple="multiple" onchange="selectedFile(this)"/>
+<img id="image" src="">
+
 <div id="content"></div>
 <script>
     $(document).ready(function () {
-        Fun.loadMD("home.md", "content", "iframe");
+        //Fun.loadMD("home.md", "content", "iframe");
 
     });
     var user = 'ixou';
@@ -41,26 +43,27 @@
     var webrepo = 'website';
 
     var testFile = 'dir.markdown.md';
-    Github.Authorization.setAuthor(user,pwd);
+    Github.Authorization.setAuthor(user, pwd);
 
-    Github.show();
+    //Github.show();
 
-    var repo=Github.getRepo(user,webrepo);
+    var repo = Github.getRepo(user, webrepo);
     //repo.getContents();
 
     //repo.getTree();
     //repo.deleteFile('images/123456789');
     //repo.updateFile('images/12345678.png','qscefgbnyhjm,ikl','master')
     var imgData;
-    var selectedFile=function(select){
-        if(select.files ){
-            var file=select.files[0];
-            var reader=new FileReader();
-            reader.onloadend=function(){
-                imgData=reader.result;
-                //repo.createFile(file.name,imgData);
+    var selectedFile = function (select) {
+        if (select.files) {
+            var file = select.files[0];
+            var reader = new FileReader();
+            reader.onloadend = function () {
+                imgData = reader.result;
+                var img = document.getElementById("image");
+                img.src = imgData;
             };
-            reader.readAsText(file,'UTF-8');
+            reader.readAsDataURL(file);
         }
     }
 </script>
