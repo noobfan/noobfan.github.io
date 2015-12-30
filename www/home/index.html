@@ -28,32 +28,41 @@
         >
 </video>
 
-
+<input type="file" name="upfile" id="upfile"  multiple="multiple" onchange="selectedFile(this)" />
 <div id="content"></div>
 <script>
     $(document).ready(function () {
         Fun.loadMD("home.md", "content", "iframe");
 
-        var user = 'ixou';
-        var pwd = 'fzm269567';///'YoU gUeSs';
-        var userrepo = user + '.github.io';
-        var webrepo = 'website';
-        ;
-        var testFile = 'dir.markdown.md';
-        Github.setAuthorization({
-            username: user,
-            password: pwd,
-        });
-        Github.show().callback(function(ret,data){
-            Fun.debug(ret+' ->> '+data)
-        })
-        
-        var repo=Github.getRepo(user,userrepo);
-        repo.getContents();
-
-        repo.getTree();
-        
     });
+    var user = 'ixou';
+    var pwd = 'fzm269567';///'YoU gUeSs';
+    var userrepo = user + '.github.io';
+    var webrepo = 'website';
+
+    var testFile = 'dir.markdown.md';
+    Github.Authorization.setAuthor(user,pwd);
+
+    Github.show();
+
+    var repo=Github.getRepo(user,webrepo);
+    //repo.getContents();
+
+    //repo.getTree();
+    //repo.deleteFile('images/123456789');
+    //repo.updateFile('images/12345678.png','qscefgbnyhjm,ikl','master')
+    var imgData;
+    var selectedFile=function(select){
+        if(select.files ){
+            var file=select.files[0];
+            var reader=new FileReader();
+            reader.onloadend=function(){
+                imgData=reader.result;
+                //repo.createFile(file.name,imgData);
+            };
+            reader.readAsText(file,'UTF-8');
+        }
+    }
 </script>
 </body>
 </html>

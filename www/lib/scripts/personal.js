@@ -53,7 +53,7 @@ Fun.resizeIframe = function (iframeId) {
         Fun.debug(ifm + subWeb);
     }
 }
-Fun.resizeParentIframe = function (iframeId) {
+Fun.resizeParentIframe = function (id) {
     if (id)
         $(function () {
             if (window.parent != window) {
@@ -104,16 +104,25 @@ Fun.loadMD = function (fromFile, toElementID, iframe) {
         if (text) {
             Github.Markdown2Html(text, true)
                 .callback(function (ret, data) {
-                    Fun.debug(ret ? 'load from github api' : 'load from markdown.js');
-                    data = ret ? data : markdown.toHTML(text);
+                    //Fun.debug(ret ? 'load from github api' : 'load from markdown.js');
                     var content = document.getElementById(toElementID);
-                    content.innerHTML = data;
-                    $('pre code').each(function (i, block) {
-                        hljs.highlightBlock(block);
+                    if(ret){
+                        content.innerHTML = data;
+                    }else{
+                        content.innerHTML = markdown.toHTML(text);
+                    }
+                    Fun.resizeParentIframe(iframe);
+                    Fun.imgLoaded(function(){
+                        Fun.resizeParentIframe(iframe);
                     });
-                    $('p code').each(function (i, block) {
-                        hljs.highlightBlock(block);
-                    });
+                    if(!ret) {
+                        $('pre code').each(function (i, block) {
+                            hljs.highlightBlock(block);
+                        });
+                        $('p code').each(function (i, block) {
+                            hljs.highlightBlock(block);
+                        });
+                    }
                 }
             )
         } else {

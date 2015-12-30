@@ -31,6 +31,8 @@
 </head>
 
 <body>
+<script>
+</script>
 <div class="container">
     <div class="row clearfix">
         <div class="col-md-12 column">
@@ -89,19 +91,12 @@
 
     <div class="row clearfix">
         <div class="col-md-12 column">
-            <iframe id="iframe" onLoad="iframeOnload()" onmousemove="iframeOnchange()"
-                    frameborder="0" scrolling="no" width="100%" height="100%"></iframe>
+            <iframe id="iframe" frameborder="0" scrolling="no" width="100%" height="100%"></iframe>
         </div>
     </div>
 </div>
 
 <script type="text/javascript" language="javascript">
-    function iframeOnload() {
-        Fun.resizeIframe('iframe');
-    }
-    function iframeOnchange() {
-        Fun.resizeIframe('iframe');
-    }
     function navSwitch(arg) {
         var v = document.getElementById("iframe");
         v.src = arg;
