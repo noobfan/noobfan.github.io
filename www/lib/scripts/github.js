@@ -99,6 +99,7 @@ Github = (function () {
             option.data = params;
             API.REQUEST_COUNT++;
             var REQUEST_INDEX = API.REQUEST_COUNT;
+            Logger.debug('[+] #' + REQUEST_INDEX + ' ' + option.url);
             if (option.async) {
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == xhr.DONE) {
@@ -135,7 +136,6 @@ Github = (function () {
                     xhr.send(option.data);
                 else
                     xhr.send();
-                Logger.debug('[+] #' + REQUEST_INDEX + ' ' + option.url);
                 if (option.data)
                     Logger.debug(option.data);
                 return self;
@@ -346,7 +346,7 @@ Github = (function () {
             this.callback = function (cb) {
                 hook = cb;
             }
-            getContents(owner, repo, path, function (ret, data) {
+            getContents(path).callback(function (ret, data) {
                 if (ret) {
                     var url = getPath('/contents', path);
                     http().delete(url, {
@@ -362,7 +362,7 @@ Github = (function () {
         }
 
         this.getTree = function (tree, recursive) {
-            var url = getPath('/git/trees/', tree ? tree : 'master');
+            var url = getPath('/git/trees', tree ? tree : 'master');
             this.callback = http().get(url, {recursive: recursive ? recursive : true}).callback;
             return this;
         }

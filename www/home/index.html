@@ -49,8 +49,9 @@
         })
         
         var repo=Github.getRepo(user,userrepo);
-        repo.getContents(null,null);
-        
+        repo.getContents();
+
+        repo.getTree();
         
     });
 </script>
