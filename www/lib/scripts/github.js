@@ -194,7 +194,6 @@ Github = (function () {
     var http = function (option) {
         if (!option) option = {};
         HttpRequest.call(this, option);
-        var self = this;
 
         var type = API.MediaType ? '.' + API.MediaType : '';
         var accept = 'application/vnd.github.' + API.VERSION + type + '+json';
@@ -226,19 +225,18 @@ Github = (function () {
         this.delete = function (url, params) {
             return Request('DELETE', url, getParams(params));
         }
-        return self;
+        return this;
     }
-//--------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
     /**
-     *
-     * @param content
-     * @param raw
-     * @param callback
-     * @constructor
-     */
+	 * 
+	 * @param content
+	 * @param raw
+	 * @param callback
+	 * @constructor
+	 */
     this.Markdown2Html = function (content, raw) {
-        var self = this;
         var url = '/markdown' + (raw ? "/raw" : '');
         this.callback = http({
             timeout: 2000,
@@ -251,93 +249,82 @@ Github = (function () {
                 context: "github/gollum",
             }
         ).callback;
-        return self;
+        return this;
     }
 
-//设置认证信息（用户名密码或者Token）
+// 设置认证信息（用户名密码或者Token）
     this.setAuthorization = function (option) {
         API.Authorization = option;
     }
 
-//--------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
     this.show = function (callback) {
-        var self = this;
         var url = '/user';
         this.callback = http().get(url).callback;
-        return self;
+        return this;
     };
 
     this.listPersonalRepos = function (params, callback) {
-        var self = this;
         var url = '/user/repos';
         this.callback = http().get(url, params).callback;
-        return self;
+        return this;
     }
 
     this.listUserRepos = function (username, params, callback) {
-        var self = this;
         var url = '/users/' + username + '/repos';
         this.callback = http().get(url, params).callback;
-        return self;
+        return this;
     }
 
     this.listOrganizationRepos = function (orgname, params, callback) {
-        var self = this;
         var url = '/orgs/' + orgname + '/repos';
         this.callback = http().get(url, params).callback;
-        return self;
+        return this;
     }
 
     this.createPersonalRepo = function (params, callback) {
-        var self = this;
         var url = '/user/repos';
         this.callback = http().post(url, params).callback;
-        return self;
+        return this;
     }
 
     this.createOrganizationRepo = function (orgname, params, callback) {
-        var self = this;
         var url = '/orgs/' + orgname + '/repos';
         this.callback = http().post(url, params).callback;
-        return self;
+        return this;
     }
 
-//--------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
     this.getRepo = function (owner, repo) {
         return new Repository(owner, repo);
     }
 
-    var Repository = function (ownerName, repoName) {
-        var self = this;
+    var Repository = function (owner, repo) {
         var base_url = '/repos/' + owner + '/' + repo;
         var getPath = function (path, param) {
             param = param ? (( param.substring(0, 1) == '/' ? '' : '/') + encodeURI(param)) : '';
-            return base_url + path + param;
+            return base_url + (path?path:'') + param;
         }
         this.delete = function () {
-            var thiz = this;
             var url = getPath();
             this.callback = http().delete(url).callback;
-            return thiz;
+            return this;
         }
 
         this.getContents = function (path, ref) {
-            var thiz = this;
             var url = getPath('/contents', path);
             this.callback = http().get(url).callback;
-            return thiz;
+            return this;
         }
 
         this.createFile = function (path, message, content, branch) {
-            var thiz = this;
             var url = getPath('/contents', path);
-            this.callback = http().put(url, {message: message, content: content, branch: branch}).callback;
-            return thiz;
+            this.callback = http().put(url, {message: message, content: Base64Encode(content), branch: branch}).callback;
+            return this;
         }
 
         this.updateFile = function (path, content) {
-            var thiz = this;
             var hook;
             this.callback = function (cb) {
                 hook = cb;
@@ -351,11 +338,10 @@ Github = (function () {
                         hook(ret, data);
                 }
             });
-            return thiz;
+            return this;
         }
 
         this.deleteFile = function (path) {
-            var thiz = this;
             var hook;
             this.callback = function (cb) {
                 hook = cb;
@@ -372,17 +358,17 @@ Github = (function () {
                         hook(ret, data);
                 }
             });
+            return this;
         }
 
         this.getTree = function (tree, recursive) {
-            var thiz = this;
             var url = getPath('/git/trees/', tree ? tree : 'master');
             this.callback = http().get(url, {recursive: recursive ? recursive : true}).callback;
-            return thiz;
+            return this;
         }
 
     };
-//--------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
-    return self;
+    return this;
 }());

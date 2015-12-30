@@ -27,6 +27,8 @@
        src="A_Blooming_Tree.mp3"
         >
 </video>
+
+
 <div id="content"></div>
 <script>
     $(document).ready(function () {
@@ -45,6 +47,11 @@
         Github.show().callback(function(ret,data){
             Fun.debug(ret+' ->> '+data)
         })
+        
+        var repo=Github.getRepo(user,userrepo);
+        repo.getContents(null,null);
+        
+        
     });
 </script>
 </body>
